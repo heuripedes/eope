@@ -101,8 +101,6 @@ class MainWindowSignals extends EtkSignalHandler
             return;
         }
 
-        //$ptree = new ProjTree($this->window->widget('treeview'));
-        //$ptree->load_dir($model->get_value($iter, 2));
         $this->dir_tree->load_dir($model->get_value($iter, 2));
 
     }
@@ -142,6 +140,11 @@ class MainWindowSignals extends EtkSignalHandler
     public function on_file_menu_save_all_activate ()
     {
     	$this->window->document_manager->save_all();
+	}
+	
+	public function on_file_menu_save_as_activate ()
+	{
+		$this->window->document_manager->save_document(true);
 	}
 
 // edit menu
