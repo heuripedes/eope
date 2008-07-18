@@ -1,0 +1,7 @@
+TODO:
+aehuahuhuh
+- CODE
+finish menu signals
+implement clipboard functions.
+- FEATURES
+re-open documents
