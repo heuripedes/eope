@@ -18,15 +18,91 @@ class MainWindowSignals extends EtkSignalHandler
 		$options = array('language' => $this->window->widget('lang_combo')->get_active_text());
     	$document->set_options($options);
     }
+    
+    public function on_tab_combo_changed ()
+    {
+    	$document = $this->window->document_manager->get_document();
+    	
+    	if ($document === false)
+    	{
+    		return;
+		}
+		$options = array('tab_style' => $this->window->widget('tab_combo')->get_active());
+		$document->set_options($options);
+	}
 
     public function on_directory_tree_set_focus ()
     {
         $this->window->present();
     }
 
+// tools menu
+	public function on_menu_tools_paste_php_activate ()
+	{
+		$document = $this->window->document_manager->get_document();
+		
+		if ($document === false)
+		{
+			return;
+		}
+		
+		$body ="parent_pid=&format=php";
+		$body .= "&code2=".$document->get_text();
+		$body .= "&poster=Eope&paste=Send&remember=1&expiry=m&email=";
+		
+		$request = "POST /pastebin.php HTTP/1.0\r\n";
+		$request .= "Host: php.pastebin.com\r\n";
+		$request .= "Accept: */*;q=0.1\r\n";
+		$request .= "Content-Type: application/x-www-form-urlencoded\r\n";
+		$request .= "Content-length: " . strlen($body). "\r\n\r\n";
+		$request .= $body;
+		$request .= "\r\n";
+		
+		$fp = fsockopen('php.pastebin.com', 80, $errno, $errstr, 30);
+		
+		$title = 'Error';
+		$message = "Cannot paste your code.\n$errno: $errstr\n";
+		$type = Gtk::MESSAGE_ERROR;
+		
+		if ($fp !== false)
+		{
+			fwrite($fp, $request);
+
+			$response = '';
+			while (!feof($fp))
+			{
+				$response .= fread($fp, 1024);
+			}
+			fclose($fp);
+
+			preg_match('/Location: http:\/\/php.pastebin.com\/([a-z0-9]+)/', $response, $results);
+			
+			if (isset($results[1]))
+			{
+				$title = 'Paste sucessful';
+				$message = "Your code has been pasted. Check it at:\n\nhttp://php.pastebin.com/".$results[1];
+				$type = Gtk::MESSAGE_INFO;
+			}
+			else
+			{
+				$message = "Cannot paste your code.";
+			}
+		}
+		
+		$dialog = new GtkMessageDialog (
+			$this->window->get_window(),
+			Gtk::DIALOG_MODAL, 
+			$type,
+			Gtk::BUTTONS_OK,
+			$message
+		);
+		$dialog->set_title($title);
+		$dialog->run();
+		$dialog->destroy();
+	}
+	
 	public function on_menu_tools_preferences_activate ()
 	{
-		echo 'aa';
 		$this->window->document_manager->open_document(EOPE_ROOT.'/eope.conf');
 	}
 	

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Fri Jul 18 15:07:17 2008 -->
+<!--Generated with glade3 3.4.3 on Sat Jul 19 11:43:42 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
+    <property name="width_request">640</property>
+    <property name="height_request">480</property>
     <property name="title" translatable="yes">Eope</property>
-    <property name="default_width">600</property>
-    <property name="default_height">500</property>
+    <property name="default_width">640</property>
+    <property name="default_height">480</property>
     <property name="icon_name">gtk-edit</property>
     <signal name="destroy" handler="on_main_window_destroy"/>
     <child>
@@ -299,6 +301,38 @@
                   <widget class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
+                      <widget class="GtkImageMenuItem" id="menu_tools_pastebin">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">_Pastebin</property>
+                        <property name="use_underline">True</property>
+                        <child>
+                          <widget class="GtkMenu" id="menu_paste">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkMenuItem" id="menu_tools_paste_php">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">Php</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="on_menu_tools_paste_php_activate"/>
+                              </widget>
+                            </child>
+                          </widget>
+                        </child>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image20">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-paste</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="menuitem2">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkImageMenuItem" id="menu_tools_preferences">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Edit preferences</property>
@@ -346,7 +380,7 @@
               </widget>
             </child>
             <child>
-              <widget class="GtkMenuItem" id="help_menu2">
+              <widget class="GtkMenuItem" id="help_menu">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">He_lp</property>
                 <property name="use_underline">True</property>
@@ -375,6 +409,7 @@
                           <widget class="GtkImage" id="menu-item-image18">
                             <property name="visible">True</property>
                             <property name="stock">gtk-help</property>
+                            <property name="icon_size">1</property>
                           </widget>
                         </child>
                       </widget>
@@ -566,6 +601,7 @@ Soft tabs (2)
 Soft tabs (3)
 Soft tabs (4)
 Soft tabs (8)</property>
+                <signal name="changed" handler="on_tab_combo_changed"/>
               </widget>
               <packing>
                 <property name="expand">False</property>

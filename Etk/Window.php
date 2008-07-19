@@ -5,7 +5,6 @@ require_once('Etk/SignalHandler.php');
 abstract class EtkWindow extends EtkObject
 {
     protected $signal_handler = null;
-    protected $window = null;
     protected $glade = null;
     protected $glade_mode = false;
     protected $glade_file = '';
@@ -109,11 +108,6 @@ abstract class EtkWindow extends EtkObject
         $this->glade->signal_autoconnect_instance($this->signal_handler);
     }
 
-    public function gtk_window ()
-    {
-        return $this->window;
-    }
-
     public function widget ($widgetname)
     {
         if (!$this->glade_mode)
@@ -135,7 +129,7 @@ abstract class EtkWindow extends EtkObject
 
     public function refresh ()
     {
-        $this->window->show();
+        $this->window->show_all();
     }
 
     public function __call ($method, $params)

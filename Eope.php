@@ -18,8 +18,8 @@ class Eope extends EtkApplication
     public $documents = array();
     public $doc_manager = null;
     public $config = array();
-    public $langlist = array();
-
+    protected $langlist = array();
+    
     public function __construct ()
     {
     	$this->config = parse_ini_file(EOPE_ROOT . '/eope.conf', true);
@@ -45,13 +45,25 @@ class Eope extends EtkApplication
 		}
 		
 		$this->window->widget('lang_combo')->set_active(count($this->langlist) -1);
-		array_map('strtolower', $this->langlist);
+		$this->langlist = array_map('strtolower', $this->langlist);
 		
         $this->run();
     }
     
-    public function get_lang_index ($lang)
+    public function get_lang_index ($lang = 'none')
     {
+    	if ($lang == '')
+    	{
+    		$lang = 'none';
+		}
+    	$lang = strtolower($lang);
+    	return array_search($lang, $this->langlist);
+	}
+	
+	public function terminate ()
+	{
+		parent::terminate();
+		//$files = $this->mainwindow->document_manager->get_modified_files();
 	}
 }
 

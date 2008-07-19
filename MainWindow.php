@@ -29,9 +29,10 @@ class MainWindow extends EtkWindow
         {
         	$this->widget('vbox3')->set_visible(false);
 		}
-        
+		
 		$this->auto_connect();
         $this->refresh();
+        $this->activate_widgets();
     }
 
     public function auto_connect ()
@@ -49,7 +50,7 @@ class MainWindow extends EtkWindow
 		$this->widget('file_menu_save_all')->set_sensitive($active);
 		$this->widget('file_menu_save_as')->set_sensitive($active);
 		$this->widget('file_menu_close')->set_sensitive($active);
-		
+		$this->widget('menu_tools_pastebin')->set_sensitive($active);		
 		$this->widget('edit_menu')->set_sensitive($active);
 	}
 }

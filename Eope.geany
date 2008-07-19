@@ -7,14 +7,14 @@ description=
 run_cmd=
 
 [files]
-current_page=10
-FILE_NAME_0=1422;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\DocumentManager.php;
-FILE_NAME_1=3474;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Document.php;
-FILE_NAME_2=2908;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindowSignals.php;
+current_page=5
+FILE_NAME_0=2341;4;0;16;0;1;0;C:\\Dev\\Eope\\eope\\DocumentManager.php;
+FILE_NAME_1=5107;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Document.php;
+FILE_NAME_2=311;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindowSignals.php;
 FILE_NAME_3=2778;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\ProjTree.php;
 FILE_NAME_4=178;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindow.php;
-FILE_NAME_5=288;13;0;16;1;1;0;C:\\Dev\\Eope\\eope\\eope.conf;
-FILE_NAME_6=24;4;0;0;1;1;0;C:\\Dev\\Eope\\eope\\Eope.php;
+FILE_NAME_5=1242;13;0;16;1;1;0;C:\\Dev\\Eope\\eope\\eope.conf;
+FILE_NAME_6=1148;4;0;0;1;1;0;C:\\Dev\\Eope\\eope\\Eope.php;
 FILE_NAME_7=0;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\bootstrap.php;
 FILE_NAME_8=335;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\FileDialogs.php;
 FILE_NAME_9=763;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Etk\\Window.php;

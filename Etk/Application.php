@@ -4,11 +4,14 @@ require_once('Etk/Window.php');
 
 abstract class EtkApplication extends EtkObject
 {
-    public $window = null;
-    private $glade = null;
-
-    public function __construct ()
+	protected $title = '';
+	protected $directory = '';
+	
+    public function __construct ($title = 'EtkApplication', $directory = '.')
     {
+    	$this->set_title($title);
+    	$this->directory = $directory;
+    	
         if (!$this->window)
         {
             $this->window = new MainWindow($this);
@@ -27,8 +30,13 @@ abstract class EtkApplication extends EtkObject
 
     public function set_title ($title)
     {
-        $this->window->set_title($title);
+        $this->title = $title;
     }
+    
+    public function get_title ()
+    {
+    	return $this->title;
+	}
 
     public function get_application ()
     {

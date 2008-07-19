@@ -6,6 +6,7 @@ class Document extends GtkSourceView
     protected $filename = '';
     protected $title = '';
     protected $lang_name = '';
+    protected $options = array();
 
     public function __construct ()
     {
@@ -177,6 +178,11 @@ class Document extends GtkSourceView
 		return false;
 	}
 	
+	public function get_options ()
+	{
+		return $this->options;
+	}
+	
     public function set_options ($options)
     {
         if (isset($options['tab_style']))
@@ -187,7 +193,7 @@ class Document extends GtkSourceView
             $this->set_insert_spaces_instead_of_tabs($options['tab_style'] > 4);
         }
 
-    	if (isset($options['language']) && is_string($options['language']))
+    	if (isset($options['language']) && is_string($options['language']) && $options['language'] != 'none')
     	{
     		if (strpos($options['language'], '/'))
     		{
@@ -197,6 +203,11 @@ class Document extends GtkSourceView
 			{
 				$this->set_language_by_name($options['language']);
 			}
+		}
+		
+		if (isset($options['word_wrap']) && $options['word_wrap'] == true)
+		{
+			$this->set_wrap_mode(GTK::WRAP_WORD);
 		}
 
         if (isset($options['line_numbers']) && $options['line_numbers'] == true)
@@ -227,5 +238,7 @@ class Document extends GtkSourceView
 			$this->modify_font(new PangoFontDescription($tokens[0] . ' ' . $tokens[2] . ' ' .$tokens[1]));
 		}
         $this->set_cursor_visible(true);
+        
+        $this->options = array_merge($this->options, $options);
     }
 }

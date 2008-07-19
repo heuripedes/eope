@@ -6,7 +6,7 @@ class FileDialogs
 	{
 		if ($window instanceof EtkWindow)
 		{
-			$window = $window->gtk_window();
+			$window = $window->get_window();
 		}
 		if (!$window instanceof GtkWindow && $window !== null)
 		{

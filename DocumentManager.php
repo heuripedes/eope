@@ -55,15 +55,17 @@ class DocumentManager extends GtkNotebook
     	
     	$lang = $document->get_buffer()->get_language();
     	
-    	if ($lang)
+    	if ($lang instanceof GtkSourceLanguage)
     	{
-    		$index = array_search(strtolower($lang->get_name()), $this->application->langlist);
-		}
-		else
+    	    $index = $this->application->get_lang_index($lang->get_name());
+		    $this->mainwindow->widget('lang_combo')->set_active($index);
+		    echo 'index: '.$index."\n";
+        }
+		
+		if (count($options = $document->get_options()) >= 2)
 		{
-			$index = array_search('None', $this->application->langlist);
-		}
-		$this->mainwindow->widget('lang_combo')->set_active($index);
+		    $this->mainwindow->widget('tab_combo')->set_active($options['tab_style']-1);
+        }
     }
     
     public function on_document_change ()
@@ -162,7 +164,6 @@ class DocumentManager extends GtkNotebook
         	{
         		return;
 			}
-			
 		}
 		
 		if (is_string($filename) && strlen($filename) > 0)
@@ -224,6 +225,8 @@ class DocumentManager extends GtkNotebook
         	case 'c': $options['language'] = 'c'; break;
         	case 'hxx':
         	case 'cpp': $options['language'] = 'c++'; break;
+        	
+        	default: $options['language'] = 'none';
 		}
                 
         $document->set_options($options);
@@ -239,8 +242,11 @@ class DocumentManager extends GtkNotebook
         $document->connect_simple('move-cursor', array($this, 'on_document_change'));
 		$document->get_buffer()->connect_simple('changed', array($this, 'on_document_change'));
 		
-		$this->window->set_title($title);
+		$this->mainwindow->set_title($title);
 		$this->on_change_tab();
+		
+    	$index = $this->application->get_lang_index($options['language']);
+		$this->mainwindow->widget('lang_combo')->set_active($index);
 		
         $this->documents[] = $document;
     }
