@@ -193,10 +193,15 @@ class MainWindowSignals extends EtkSignalHandler
     }
 
 // view menu {
-	public function on_view_menu_dir_tree_activate ()
+	public function on_view_side_panel_activate ()
     {
-        $this->window->widget('vbox3')->set_visible(!$this->window->widget('vbox3')->is_visible());
+        $this->window->widget('side_panel')->set_visible(!$this->window->widget('side_panel')->is_visible());
     }
+    
+    public function on_view_menu_bottom_panel_activate ()
+    {
+    	$this->window->widget('bottom_panel')->set_visible(!$this->window->widget('bottom_panel')->is_visible());
+	}
 // file menu {
     public function on_file_menu_close_activate ()
     {
@@ -229,6 +234,11 @@ class MainWindowSignals extends EtkSignalHandler
     {
         $this->window->document_manager->save_document();
     }
+    
+    public function on_file_menu_save_all_activate ()
+    {
+    	$this->window->document_manager->save_all();
+	}
 
 // edit menu
     public function on_menu_edit_undo_activate ()
@@ -243,6 +253,26 @@ class MainWindowSignals extends EtkSignalHandler
     
     public function on_menu_edit_paste_activate ()
     {
-    	//$this->window->document_manager->
+    	$document = $this->window->document_manager->get_document();
+    	if ($document instanceof Document)
+    	{
+    		$document->paste();
+		}
+	}
+	public function on_menu_edit_cut_activate ()
+    {
+    	$document = $this->window->document_manager->get_document();
+    	if ($document instanceof Document)
+    	{
+    		$document->cut();
+		}
+	}
+	public function on_menu_edit_copy_activate ()
+    {
+    	$document = $this->window->document_manager->get_document();
+    	if ($document instanceof Document)
+    	{
+    		$document->copy();
+		}    	
 	}
 }

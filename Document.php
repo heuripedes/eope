@@ -28,7 +28,12 @@ class Document extends GtkSourceView
 
     public function get_modified ()
     {
-        $this->buffer->get_modified();
+        return $this->buffer->get_modified();
+    }
+    
+    public function set_modified ($modified = true)
+    {
+        $this->buffer->set_modified($modified);
     }
     
     public function undo ()
@@ -43,9 +48,17 @@ class Document extends GtkSourceView
     
     public function paste ()
     {
-    	$clipboard = new GtkClipboard();
-    	$text = $clipboard->wait_for_text();
-    	echo $text;    	
+    	$this->buffer->paste_clipboard(new GtkClipboard(), null, True);
+	}
+	
+	public function cut ()
+	{
+		$this->buffer->cut_clipboard(new GtkClipboard(), true);
+	}
+	
+	public function copy ()
+	{
+		$this->buffer->copy_clipboard(new GtkClipboard());
 	}
 
     public function get_text ($hidden = true)

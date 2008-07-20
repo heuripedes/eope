@@ -12,6 +12,7 @@ require_once('MainWindow.php');
 require_once('FileDialogs.php');
 require_once('ProjTree.php');
 require_once('ConfigurationManager.php');
+require_once('PluginManager.php');
 require_once('DocumentManager.php');
 
 
@@ -24,8 +25,8 @@ class Eope extends EtkApplication
     
     public function __construct ()
     {
-        $this->config = new ConfigurationManager();
-        $this->config->load();
+        $config = new ConfigurationManager();
+        $config->load();
         
         parent::__construct();
     	
@@ -34,7 +35,7 @@ class Eope extends EtkApplication
 
         $this->langlist = array();
         
-        foreach($lang_objects as $obj)
+        foreach ($lang_objects as $obj)
         {
 			$this->langlist[] = $obj->get_name();
         }
@@ -43,13 +44,25 @@ class Eope extends EtkApplication
         
         $this->langlist[] = 'None';
         
-        foreach($this->langlist as $lang)
+        foreach ($this->langlist as $lang)
         {
         	 $this->window->widget('lang_combo')->append_text($lang);
 		}
 		
 		$this->window->widget('lang_combo')->set_active(count($this->langlist) -1);
 		$this->langlist = array_map('strtolower', $this->langlist);
+		
+		if ((bool)$config->get('files.reopen'))
+		{
+			$files = explode(':', $config->get('files.last_files'));
+			if ($files[0] != '')
+			{
+				foreach($files as $file)
+				{
+					$this->window->document_manager->open_document($file);
+				}
+			}
+		}
 		
         $this->run();
     }
@@ -66,7 +79,10 @@ class Eope extends EtkApplication
 	
 	public function terminate ()
 	{
-		$this->config->store();
+		$config = new ConfigurationManager();
+		$files = implode(':', $this->window->document_manager->get_open_files());
+		$config->set('files.last_files', $files);
+		$config->store();
 		parent::terminate();
 		//$files = $this->mainwindow->document_manager->get_modified_files();
 	}

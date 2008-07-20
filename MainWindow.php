@@ -22,20 +22,21 @@ class MainWindow extends EtkWindow
         $this->auto_signal_handler(__CLASS__);
 
         $this->document_manager = new DocumentManager($application, $this);
-        $this->widget('main_hpaned')->add2($this->document_manager);
-        //$this->widget('main_hpaned')->reorder_child($this->document_manager, 1);
-        $this->widget('main_hpaned')->show_all();
+        $this->widget('editor_vbox')->pack_start($this->document_manager);
+        $this->widget('editor_vbox')->show_all();
+
 
         $this->widget('tab_combo')->set_active(6);
         
+        $this->resize((int)$config->get('ui.width'), (int)$config->get('ui.height'));
         
-        $this->resize($config->get('ui.width'), $config->get('ui.height'));
-        print($config->get('ui.width'));
-       	$this->widget('vbox3')->set_visible((bool)$config->get('ui.directory_view'));
-		
 		$this->auto_connect();
         $this->refresh();
         $this->activate_widgets();
+        
+        
+        $this->widget('side_panel')->set_visible((bool)$config->get('side_panel.visible'));
+       	$this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
     }
 
     public function auto_connect ()
@@ -45,7 +46,7 @@ class MainWindow extends EtkWindow
 	
 	public function activate_widgets ($active = false)
 	{
-		$this->widget('bottom_box')->set_visible($active);
+		$this->widget('fake_status_bar')->set_visible($active);
 		$this->widget('file_menu_save')->set_sensitive($active);
 		$this->widget('file_menu_save_all')->set_sensitive($active);
 		$this->widget('file_menu_save_as')->set_sensitive($active);

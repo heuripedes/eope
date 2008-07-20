@@ -7,12 +7,12 @@ description=
 run_cmd=
 
 [files]
-current_page=3
-FILE_NAME_0=1214;4;0;16;0;1;0;C:\\Dev\\Eope\\eope\\DocumentManager.php;
-FILE_NAME_1=4789;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Document.php;
-FILE_NAME_2=1741;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindowSignals.php;
-FILE_NAME_3=414;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindow.php;
-FILE_NAME_4=36637;7;0;16;1;1;0;C:\\Dev\\Eope\\xtras\\textflow-0.2.3.2\\TextFlow\\ui\\MainWindow.py;
-FILE_NAME_5=1254;4;0;0;1;1;0;C:\\Dev\\Eope\\eope\\Eope.php;
-FILE_NAME_6=2119;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Etk\\Etk.php;
-FILE_NAME_7=42;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Etk\\Application.php;
+current_page=7
+FILE_NAME_0=895;4;0;16;0;1;0;C:\\Dev\\Eope\\eope\\DocumentManager.php;
+FILE_NAME_1=980;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Document.php;
+FILE_NAME_2=6986;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindowSignals.php;
+FILE_NAME_3=453;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindow.php;
+FILE_NAME_4=31609;7;0;16;1;1;0;C:\\Dev\\Eope\\xtras\\textflow-0.2.3.2\\TextFlow\\ui\\MainWindow.py;
+FILE_NAME_5=984;4;0;0;1;1;0;C:\\Dev\\Eope\\eope\\Eope.php;
+FILE_NAME_6=171;20;0;16;1;1;0;C:\\Dev\\Eope\\eope\\TODO.txt;
+FILE_NAME_7=1792;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\ConfigurationManager.php;

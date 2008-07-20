@@ -6,12 +6,11 @@ class ConfigurationManager extends EtkObject
 	
 	protected static $config = array(
 		'ui' => array(
-			'sidebar' => true,
 			'width' => 640,
 			'height' => 480
 			),
 		'editor' => array(
-			'font' => 'monospace medium 9',//'Monaco:9:medium',
+			'font' => 'monospace medium 9',
 			'auto_indent' => true,
 			'tab_style' => 4,
 			'highlight_line' => false,
@@ -22,8 +21,17 @@ class ConfigurationManager extends EtkObject
 			'line_markers' => true
 			),
 		'files' => array(
-			'reopen' => true,
+			'reopen' => false,
 			'last_files' => ''
+			),
+		'plugins' => '',
+		'side_panel' => array(
+			'visible' => false,
+			'width' => 100
+			),
+		'bottom_panel' => array(
+			'visible' => false,
+			'height' => 100
 			)
 	);
 	protected $modified = false;

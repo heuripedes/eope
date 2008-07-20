@@ -1,7 +1,8 @@
 TODO:
-aehuahuhuh
+
 - CODE
+integrate the plugin manager with the application
+convert pastebin feature to a plugin
 finish menu signals
 implement clipboard functions.
 - FEATURES
-re-open documents

@@ -109,6 +109,12 @@ class DocumentManager extends GtkNotebook
 		return $this->documents[$index];
 	}
     
+    public function save_all ()
+    {
+        for ($i=count($this->documents);$i--;)
+            $this->save_document($i);
+    }
+    
     public function save_document ($index = -1)
     {
 		$document = $this->get_document($index);
@@ -136,6 +142,7 @@ class DocumentManager extends GtkNotebook
 
     	if ($document->save())
     	{
+    	    $child = $this->get_nth_page($index);
     		$document->set_title(basename($filename));
 			$this->set_tab_label_text($child, $document->get_title());
 			$document->get_buffer()->set_modified(false);
@@ -150,7 +157,7 @@ class DocumentManager extends GtkNotebook
 	 * if filename = string: open file
 	 * 
 	 * @param string|boolean|null $filename
-	 */
+     */
     public function open_document ($filename = null)
     {
         $document = new Document();
@@ -248,6 +255,16 @@ class DocumentManager extends GtkNotebook
 		$this->mainwindow->widget('lang_combo')->set_active($index);
 		
         $this->documents[] = $document;
+    }
+
+    public function get_open_files ()
+    {
+        $files = array();
+        foreach ($this->documents as $document)
+        {
+            $files[] = $document->get_filename();
+        }
+        return $files;
     }
 }
 
