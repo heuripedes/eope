@@ -6,16 +6,14 @@ abstract class EtkApplication extends EtkObject
 {
 	protected $title = '';
 	protected $directory = '';
+	protected $config = null;
 	
-    public function __construct ($title = 'EtkApplication', $directory = '.')
+    public function __construct ($directory = '.')
     {
-    	$this->set_title($title);
     	$this->directory = $directory;
     	
-        if (!$this->window)
-        {
-            $this->window = new MainWindow($this);
-        }
+        $this->window = new MainWindow($this);        
+        
     }
 
     public function run ()
@@ -27,17 +25,7 @@ abstract class EtkApplication extends EtkObject
     {
         Gtk::main_quit();
     }
-
-    public function set_title ($title)
-    {
-        $this->title = $title;
-    }
-    
-    public function get_title ()
-    {
-    	return $this->title;
-	}
-
+	
     public function get_application ()
     {
         return $this;

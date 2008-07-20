@@ -7,12 +7,15 @@ class MainWindow extends EtkWindow
     public $notebook = null;
     public $treeview = null;
     public $dir_tree = null;
+    public $config = null;
 
     public $document_manager = null;
 
     public function __construct (EtkApplication $application)
     {
         parent::__construct($application);
+
+        $config = new ConfigurationManager();
 
         $this->create_from_glade(EOPE_ROOT . '/eope.glade','main_window');
 
@@ -25,10 +28,10 @@ class MainWindow extends EtkWindow
 
         $this->widget('tab_combo')->set_active(6);
         
-        if ($this->application->config['application']['directory_window'] != true)
-        {
-        	$this->widget('vbox3')->set_visible(false);
-		}
+        
+        $this->resize($config->get('ui.width'), $config->get('ui.height'));
+        print($config->get('ui.width'));
+       	$this->widget('vbox3')->set_visible((bool)$config->get('ui.directory_view'));
 		
 		$this->auto_connect();
         $this->refresh();
@@ -38,9 +41,6 @@ class MainWindow extends EtkWindow
     public function auto_connect ()
     {
     	parent::auto_connect();
-    	$this->dir_tree = $this->widget('directory_tree');
-        $this->dir_tree->connect_simple('delete-event', array($this->dir_tree, 'hide_on_delete'));
-        $this->dir_tree->connect_simple('configure-event', array($this, 'auto_update'));
 	}
 	
 	public function activate_widgets ($active = false)

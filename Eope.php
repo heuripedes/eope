@@ -11,23 +11,27 @@ require_once('Etk/Application.php');
 require_once('MainWindow.php');
 require_once('FileDialogs.php');
 require_once('ProjTree.php');
+require_once('ConfigurationManager.php');
 require_once('DocumentManager.php');
+
 
 class Eope extends EtkApplication
 {
     public $documents = array();
     public $doc_manager = null;
-    public $config = array();
+    public $config = null;
     protected $langlist = array();
     
     public function __construct ()
     {
-    	$this->config = parse_ini_file(EOPE_ROOT . '/eope.conf', true);
-        parent::__construct();
+        $this->config = new ConfigurationManager();
+        $this->config->load();
         
+        parent::__construct();
+    	
         $lang_manager = new GtkSourceLanguagesManager();
         $lang_objects = $lang_manager->get_available_languages();
-        
+
         $this->langlist = array();
         
         foreach($lang_objects as $obj)
@@ -62,6 +66,7 @@ class Eope extends EtkApplication
 	
 	public function terminate ()
 	{
+		$this->config->store();
 		parent::terminate();
 		//$files = $this->mainwindow->document_manager->get_modified_files();
 	}

@@ -7,10 +7,11 @@ class DocumentManager extends GtkNotebook
     protected $documents = array();
     protected $mainwindow = null;
     protected $application = null;
+    protected $config = null;
     protected $untitled_count = 0;
     protected $close_icon = null;
 
-    public function __construct (EtkApplication $application, EtkWindow $window)
+    public function __construct (Eope $application, MainWindow $window)
     {
         parent::__construct();
         $this->application = $application;
@@ -34,6 +35,12 @@ class DocumentManager extends GtkNotebook
 		}
 		
     	$docbuffer = $document->get_buffer();
+    	
+    	if (!$docbuffer instanceof GtkSourceBuffer)
+    	{
+    	    return;
+        }
+        
     	$pos = $document->get_cursor_pos();
     	
     	$this->mainwindow->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
@@ -53,19 +60,11 @@ class DocumentManager extends GtkNotebook
     	$child = $this->get_nth_page($this->get_current_page());
 		$this->set_tab_label_text($child, $title);
     	
-    	$lang = $document->get_buffer()->get_language();
+    	$lang = $document->get_language_name();
     	
-    	if ($lang instanceof GtkSourceLanguage)
-    	{
-    	    $index = $this->application->get_lang_index($lang->get_name());
-		    $this->mainwindow->widget('lang_combo')->set_active($index);
-		    echo 'index: '.$index."\n";
-        }
-		
-		if (count($options = $document->get_options()) >= 2)
-		{
-		    $this->mainwindow->widget('tab_combo')->set_active($options['tab_style']-1);
-        }
+    	$index = $this->application->get_lang_index($lang);
+        $this->mainwindow->widget('lang_combo')->set_active($index);
+        
     }
     
     public function on_document_change ()
@@ -192,44 +191,44 @@ class DocumentManager extends GtkNotebook
         $page = $this->append_page($swindow, new GtkLabel($title));
         
         $this->mainwindow->activate_widgets(true); 
-        
-        $options = $this->application->config['editor'];
-        
+
         $ext = explode('.', $filename);
+        
         switch(strtolower(end($ext)))
         {
         	// scripting
-        	case 'pl': $options['language'] = 'perl'; break;
-        	case 'py': $options['language'] = 'python'; break;
-        	case 'rb': $options['language'] = 'ruby'; break;
-        	case 'php': $options['language'] = 'php'; break;
-        	case 'sh': $options['language'] = 'sh'; break;
+        	case 'pl': $language = 'perl'; break;
+        	case 'py': $language = 'python'; break;
+        	case 'rb': $language = 'ruby'; break;
+        	case 'php': $language = 'php'; break;
+        	case 'sh': $language = 'sh'; break;
         	case 'javascript':
-        	case 'js': $options['language'] = 'javascript'; break;
+        	case 'js': $language = 'javascript'; break;
         	
         	// markup
         	case 'htm': case 'xhtm': case 'xhtml':
-        	case 'html': $options['language'] = 'html'; break;
-        	case 'xml': $options['language'] = 'xml'; break;
+        	case 'html': $language = 'html'; break;
+        	case 'xml': $language = 'xml'; break;
         	
         	// style
-        	case 'css': $options['language'] = 'css'; break;
+        	case 'css': $language = 'css'; break;
         	
         	// other
-        	case 'ini': $options['language'] = '.ini'; break;
-        	case 'conf': $options['language'] = '.ini'; break;
-        	case 'pas': $options['language'] = 'pascal'; break;
-        	case 'java': $options['language'] = 'java'; break;
-        	case 'cs': $options['language'] = 'c#'; break;
+        	case 'ini': $language = '.ini'; break;
+        	case 'conf': $language = '.ini'; break;
+        	case 'pas': $language = 'pascal'; break;
+        	case 'java': $language = 'java'; break;
+        	case 'cs': $language = 'c#'; break;
         	case 'h':
-        	case 'c': $options['language'] = 'c'; break;
+        	case 'c': $language = 'c'; break;
         	case 'hxx':
-        	case 'cpp': $options['language'] = 'c++'; break;
+        	case 'cpp': $language = 'c++'; break;
         	
-        	default: $options['language'] = 'none';
+        	default: $language = 'none';
 		}
                 
-        $document->set_options($options);
+        $document->set_language_by_name($language);
+        $document->refresh_options();
             
 		$this->show_all();
 
@@ -237,7 +236,7 @@ class DocumentManager extends GtkNotebook
         $this->set_current_page($page);
         
         $document->grab_focus();
-        $document->set_parent_tab($this->get_current_page());
+        //$document->set_parent_tab($this->get_current_page());
         
         $document->connect_simple('move-cursor', array($this, 'on_document_change'));
 		$document->get_buffer()->connect_simple('changed', array($this, 'on_document_change'));
@@ -245,7 +244,7 @@ class DocumentManager extends GtkNotebook
 		$this->mainwindow->set_title($title);
 		$this->on_change_tab();
 		
-    	$index = $this->application->get_lang_index($options['language']);
+    	$index = $this->application->get_lang_index($language);
 		$this->mainwindow->widget('lang_combo')->set_active($index);
 		
         $this->documents[] = $document;

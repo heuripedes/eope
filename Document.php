@@ -11,8 +11,9 @@ class Document extends GtkSourceView
     public function __construct ()
     {
         parent::__construct();
-        $this->buffer = new GtkSourceBuffer();
-        $this->set_buffer($this->buffer);
+        $buffer = new GtkSourceBuffer();
+        $this->set_buffer($buffer);
+        $this->buffer = $this->get_buffer();
     }
 
     public function set_parent_tab ($tab)
@@ -49,7 +50,8 @@ class Document extends GtkSourceView
 
     public function get_text ($hidden = true)
     {
-        return $this->buffer->get_text($this->buffer->get_start_iter(), $this->buffer->get_end_iter(), $hidden);
+        return $this->buffer->get_text($this->buffer->get_start_iter(),
+        		$this->buffer->get_end_iter(), $hidden);
     }
 
     public function set_text ($text, $undoable = false)
@@ -89,7 +91,10 @@ class Document extends GtkSourceView
 
     public function get_cursor_pos ()
     {
-        
+        if (!$this->buffer instanceof GtkSourceBuffer)
+        {
+        	return;
+		}
         $cursor_mark = $this->buffer->get_insert();
         $cursor_iter = $this->buffer->get_iter_at_mark($cursor_mark);
         $line = $cursor_iter->get_line();
@@ -115,6 +120,27 @@ class Document extends GtkSourceView
         return $pos;
     }
 
+	public function get_language_name ()
+	{
+		$lang = $this->buffer->get_language();
+		if ($lang instanceof GtkSourceLanguage)
+		{
+			return $lang->get_name();
+		}
+		return 'None';
+	}
+	
+	public function get_language_mime ()
+	{
+		$lang = $this->buffer->get_language();
+		if ($lang instanceof GtkSourceLanguage)
+		{
+			$mimes = $lang->get_mime_types();
+			return $mimes[0];
+		}
+		return 'text/plain';
+	}
+	
     public function set_language_by_mime ($mimetype)
     {
     	if ($mimetype == 'text/plain')
@@ -183,62 +209,26 @@ class Document extends GtkSourceView
 		return $this->options;
 	}
 	
-    public function set_options ($options)
+    public function refresh_options ()
     {
-        if (isset($options['tab_style']))
-        {
-            $width = array(1=>2, 2=>3, 3=>4, 4=>8);
-            $windex = ($options['tab_style'] > 4 ? $options['tab_style'] -4: $options['tab_style']);
-            $this->set_tabs_width($width[$windex]);
-            $this->set_insert_spaces_instead_of_tabs($options['tab_style'] > 4);
-        }
-
-    	if (isset($options['language']) && is_string($options['language']) && $options['language'] != 'none')
-    	{
-    		if (strpos($options['language'], '/'))
-    		{
-    			$this->set_language_by_mime($options['language']);
-			}
-			else
-			{
-				$this->set_language_by_name($options['language']);
-			}
-		}
-		
-		if (isset($options['word_wrap']) && $options['word_wrap'] == true)
+    	$conf = new ConfigurationManager();
+    	$n = $conf->get('editor.tab_style') ;
+    	$width = array(2, 3, 4, 8);
+        $this->set_tabs_width(($n > 3 ? $width[$n-4] : $width[$n]));
+        $this->set_insert_spaces_instead_of_tabs($conf->get('editor.tab_style') > 3);
+				
+		if ($conf->get('editor.word_wrap') == true)
 		{
 			$this->set_wrap_mode(GTK::WRAP_WORD);
 		}
 
-        if (isset($options['line_numbers']) && $options['line_numbers'] == true)
-		{
-			$this->set_show_line_numbers(true);
-		}
-
-		if (isset($options['line_markers']) && $options['line_markers'] == true)
-		{
-		    $this->set_show_line_markers(true);
-		}
-
-		if (isset($options['auto_indent']) && $options['auto_indent'] == true)
-		{
-			$this->set_auto_indent(true);
-		}
-
-		if (isset($options['smart_keys']) && $options['smart_keys'] == true)
-		{
-			$this->set_smart_home_end(true);
-		}
-
-		// font format: font name:size:style
-		if (isset($options['font']) && is_string($options['font']))
-		{
-			$tokens = explode(':',$options['font']);
-			array_map('trim', $tokens);
-			$this->modify_font(new PangoFontDescription($tokens[0] . ' ' . $tokens[2] . ' ' .$tokens[1]));
-		}
-        $this->set_cursor_visible(true);
+        $this->set_show_line_numbers((bool)$conf->get('editor.line_numbers'));
+		$this->set_show_line_markers((bool)$conf->get('editor.line_markers'));
+		$this->set_auto_indent((bool)$conf->get('editor.auto_indent'));
+		
+		$this->set_smart_home_end((bool)$conf->get('editor.smart_keys'));
+		$this->modify_font(new PangoFontDescription($conf->get('editor.font')));
         
-        $this->options = array_merge($this->options, $options);
+        $this->set_cursor_visible(true);
     }
 }

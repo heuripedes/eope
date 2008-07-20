@@ -4,6 +4,10 @@ class MainWindowSignals extends EtkSignalHandler
 {
     public function on_main_window_destroy ()
     {
+    	$conf = new ConfigurationManager();
+    	$size = $this->window->get_size();
+    	$conf->set('ui.width', $size[0]);
+    	$conf->set('ui.height', $size[1]);
         $this->application->terminate();
     }
     
@@ -15,8 +19,11 @@ class MainWindowSignals extends EtkSignalHandler
     	{
     		return;
 		}
-		$options = array('language' => $this->window->widget('lang_combo')->get_active_text());
-    	$document->set_options($options);
+		
+		if ($document->get_language_name() != $this->window->widget('lang_combo')->get_active_text())
+		{
+			$document->set_language_by_name($this->window->widget('lang_combo')->get_active_text());
+		}
     }
     
     public function on_tab_combo_changed ()
@@ -27,8 +34,21 @@ class MainWindowSignals extends EtkSignalHandler
     	{
     		return;
 		}
-		$options = array('tab_style' => $this->window->widget('tab_combo')->get_active());
-		$document->set_options($options);
+		$conf = new ConfigurationManager();
+		$n = $this->window->widget('tab_combo')->get_active();
+		
+		if ($n > 3)
+		{
+			$conf->set('editor.indent.spaces', true);
+		}
+		else
+		{
+			$conf->set('editor.indent.spaces', false);
+		}
+		
+		$width = array(2, 3, 4, 8);
+		$conf->set('editor.tab_style', $n);// ($n > 3 ? $width[$n-4] : $width[$n]));
+		$document->refresh_options();
 	}
 
     public function on_directory_tree_set_focus ()
