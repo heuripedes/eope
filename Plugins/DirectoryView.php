@@ -8,6 +8,8 @@ class DirectoryViewPlugin extends Plugin
 	protected $swindow = null;
 	protected $menu = null;
 	
+	protected $window = null;
+	
 	protected $store = null;
     protected $icons = array ();
     protected $txt_renderer = null;
@@ -63,10 +65,41 @@ class DirectoryViewPlugin extends Plugin
         
         $this->menu = new GtkImageMenuItem('Open directory');
         $this->menu->set_image(GtkImage::new_from_pixbuf($this->icons['menu']));
-        //$this->menu = new GtkMenuItem('Open directory');
-        
+        $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
+        $this->treeview->connect('button-press-event', array($this, '_on_treeview_button_press_event'));
         
 		echo __CLASS__." loaded \n";
+	}
+	
+	public function _on_treeview_button_press_event ($widget, $event)
+    {
+    	echo "\nasdmaksdmkas\n";
+        if ($event->type != Gdk::_2BUTTON_PRESS || $event->button != 1) // if double-left-click
+        {
+            return;
+        }
+        $selection = $this->treeview->get_selection();
+
+        list($model, $iter) = $selection->get_selected();
+
+        if (!$model instanceof GtkTreeStore || !$iter instanceof GtkTreeIter)
+        {
+            Etk::Trace(__CLASS__, 'Nothing selected');
+            return;
+        }
+
+        $this->window->document_manager->open_document($model->get_value($iter, 2));
+        //$this->window->refresh();
+    }
+    
+	public function _on_menu_activate ()
+	{
+		$selected_dir = FileDialogs::open_dir($this->window);
+        if (isset($selected_dir) && is_dir ($selected_dir))
+        {
+            $this->load_dir($selected_dir);
+        }
+        $this->window->refresh();
 	}
 	
 	public function load_dir ($dir)
@@ -126,14 +159,17 @@ class DirectoryViewPlugin extends Plugin
 	{
 		$window = $args[0];
 		
-		$window->sidepanel_manager->add_panel($this->vbox,'Directory window');
+		$window->sidepanel_manager->add_panel($this->vbox,'Directory view');
 		
-		$accel = $window->widget('file_menu_menu')->get_accel_group();
-		$this->menu->add_accelerator(null,$accel , ord('c'), Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+		$accel = $window->get_accel_group();
+		$this->menu->add_accelerator('activate', $accel, ord('o'),
+			Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+        
 		
 		$window->widget('file_menu_menu')->add($this->menu);
 		$window->widget('file_menu_menu')->reorder_child($this->menu, 2);
 		//$this->glade->get_widget('window')->remove($this->glade->get_widget('vbox5'));
 		$window->show_all();
+		$this->window = $window;
 	}
 }

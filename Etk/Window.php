@@ -8,10 +8,12 @@ abstract class EtkWindow extends EtkObject
     protected $glade = null;
     protected $glade_mode = false;
     protected $glade_file = '';
+    protected $accel_group = null;
 
     public function __construct (EtkApplication $application)
     {
         $this->application = $application;
+        $this->accel_group = new GtkAccelGroup();
     }
 
     public static function new_raw (EtkApplication $application, $title = 'EtkWindow',
@@ -42,6 +44,7 @@ abstract class EtkWindow extends EtkObject
         $this->window = new GtkWindow($type);
         $this->window->set_title($title);
         $this->window->set_position($position);
+        $this->window->add_accel_group($this->accel_group);
     }
 
     public function create_from_glade ($gladefile, $widgetname)
@@ -60,6 +63,7 @@ abstract class EtkWindow extends EtkObject
         }
         $this->glade_mode = true;
         $this->glade_file = $gladefile;
+        $this->window->add_accel_group($this->accel_group);
     }
 
     public function create_from_buffer ($gladebuffer, $widgetname)
@@ -76,6 +80,7 @@ abstract class EtkWindow extends EtkObject
             Etk::Error(__CLASS__, 'Window not found.');
         }
         $this->glade_mode = true;
+        $this->window->add_accel_group($this->accel_group);
     }
 
     public function set_signal_handler (EtkSignalHandler $handler)
@@ -125,7 +130,11 @@ abstract class EtkWindow extends EtkObject
 
         Etk::Error(__CLASS__, 'Widget "'.$widgetname.'" not found.');
     }
-
+    
+    public function get_accel_group ()
+    {
+    	return $this->accel_group;
+	}
 
     public function refresh ()
     {

@@ -171,28 +171,6 @@ class MainWindowSignals extends EtkSignalHandler
 
     }
 
-// tree events {
-    public function on_treeview_button_press_event ($widget, $event)
-    {
-        if ($event->type != Gdk::_2BUTTON_PRESS || $event->button != 1) // if double-left-click
-        {
-            return;
-        }
-        $selection = $this->window->widget('treeview')->get_selection();
-
-        list($model, $iter) = $selection->get_selected();
-
-        if (!$model instanceof GtkTreeStore || !$iter instanceof GtkTreeIter)
-        {
-            Etk::Trace(__CLASS__, 'Nothing selected');
-            return;
-        }
-
-        $this->window->document_manager->open_document($model->get_value($iter, 2));
-        $this->window->refresh();
-
-    }
-
 // view menu {
 	public function on_view_side_panel_activate ()
     {
@@ -203,22 +181,11 @@ class MainWindowSignals extends EtkSignalHandler
     {
     	$this->window->widget('bottom_panel')->set_visible(!$this->window->widget('bottom_panel')->is_visible());
 	}
+
 // file menu {
     public function on_file_menu_close_activate ()
     {
         $this->window->document_manager->close_document();
-    }
-
-    public function on_file_menu_open_directory_activate ()
-    {
-    	$selected_dir = FileDialogs::open_dir($this->window);
-        if (isset($selected_dir) && is_dir ($selected_dir))
-        {
-            //$this->window->dir_tree->show_now();
-            $this->dir_tree = new ProjTree($this->window->widget('treeview'));
-            $this->dir_tree->load_dir($selected_dir);
-        }
-        $this->window->refresh();
     }
 
     public function on_file_menu_open_activate ()

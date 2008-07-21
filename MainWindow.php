@@ -4,10 +4,8 @@ require_once('MainWindowSignals.php');
 
 class MainWindow extends EtkWindow
 {
-    public $notebook = null;
-    public $treeview = null;
-    public $dir_tree = null;
-    public $config = null;
+    public $langlist;
+    
 
     public $document_manager = null;
     public $sidepanel_manager = null;
@@ -45,6 +43,40 @@ class MainWindow extends EtkWindow
         
         $this->widget('side_panel')->set_visible((bool)$config->get('side_panel.visible'));
        	$this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
+       	
+       	$lang_manager = new GtkSourceLanguagesManager();
+        $lang_objects = $lang_manager->get_available_languages();
+
+        $this->langlist = array();
+        
+        foreach ($lang_objects as $obj)
+        {
+			$this->langlist[] = $obj->get_name();
+        }
+        
+        sort($this->langlist);
+        
+        $this->langlist[] = 'None';
+        
+        foreach ($this->langlist as $lang)
+        {
+        	 $this->widget('lang_combo')->append_text($lang);
+		}
+		
+		$this->widget('lang_combo')->set_active(count($this->langlist) -1);
+		$this->langlist = array_map('strtolower', $this->langlist);
+		
+		if ((bool)$config->get('files.reopen'))
+		{
+			$files = explode(':', $config->get('files.last_files'));
+			if ($files[0] != '')
+			{
+				foreach($files as $file)
+				{
+					$this->document_manager->open_document($file);
+				}
+			}
+		}
        	
        	PluginManager::get_instance()->run_event('main_window_create', array($this));
     }

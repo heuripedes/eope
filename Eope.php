@@ -27,45 +27,11 @@ class Eope extends EtkApplication
         $config = ConfigManager::get_instance();
         $config->load();
         $this->plugin_manager = PluginManager::get_instance();
+        
         $this->plugin_manager->load('DirectoryView');
         
         parent::__construct();
     	
-        $lang_manager = new GtkSourceLanguagesManager();
-        $lang_objects = $lang_manager->get_available_languages();
-
-        $this->langlist = array();
-        
-        foreach ($lang_objects as $obj)
-        {
-			$this->langlist[] = $obj->get_name();
-        }
-        
-        sort($this->langlist);
-        
-        $this->langlist[] = 'None';
-        
-        foreach ($this->langlist as $lang)
-        {
-        	 $this->window->widget('lang_combo')->append_text($lang);
-		}
-		
-		$this->window->widget('lang_combo')->set_active(count($this->langlist) -1);
-		$this->langlist = array_map('strtolower', $this->langlist);
-		
-		if ((bool)$config->get('files.reopen'))
-		{
-			$files = explode(':', $config->get('files.last_files'));
-			if ($files[0] != '')
-			{
-				foreach($files as $file)
-				{
-					$this->window->document_manager->open_document($file);
-				}
-			}
-		}
-		
-		
         $this->run();
     }
     
@@ -76,7 +42,7 @@ class Eope extends EtkApplication
     		$lang = 'none';
 		}
     	$lang = strtolower($lang);
-    	return array_search($lang, $this->langlist);
+    	return array_search($lang, $this->window->langlist);
 	}
 	
 	public function terminate ()
