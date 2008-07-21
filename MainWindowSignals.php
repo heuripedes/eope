@@ -4,7 +4,7 @@ class MainWindowSignals extends EtkSignalHandler
 {
     public function on_main_window_destroy ()
     {
-    	$conf = new ConfigurationManager();
+    	$conf = ConfigManager::get_instance();
     	$size = $this->window->get_size();
     	$conf->set('ui.width', $size[0]);
     	$conf->set('ui.height', $size[1]);
@@ -34,7 +34,8 @@ class MainWindowSignals extends EtkSignalHandler
     	{
     		return;
 		}
-		$conf = new ConfigurationManager();
+		
+		$conf = ConfigManager::get_instance();
 		$n = $this->window->widget('tab_combo')->get_active();
 		
 		if ($n > 3)
@@ -259,6 +260,7 @@ class MainWindowSignals extends EtkSignalHandler
     		$document->paste();
 		}
 	}
+	
 	public function on_menu_edit_cut_activate ()
     {
     	$document = $this->window->document_manager->get_document();
@@ -267,6 +269,7 @@ class MainWindowSignals extends EtkSignalHandler
     		$document->cut();
 		}
 	}
+	
 	public function on_menu_edit_copy_activate ()
     {
     	$document = $this->window->document_manager->get_document();

@@ -4,15 +4,27 @@ require_once('Plugin.php');
 
 class PluginManager
 {
-	public static $plugins = array();
+	public $plugins = array();
 	
-	public function __construct ()
+	protected static $instance = null;
+	
+	protected function __construct ()
 	{
+		
+	}
+	
+	public static function get_instance ()
+	{
+		if (self::$instance == null)
+		{
+			self::$instance = new self();
+		}
+		return self::$instance;
 	}
 
 	public function load ($name)
 	{
-		if (!class_exist($name.'Plugin'))
+		if (!class_exists($name.'Plugin'))
 		{
 			if (file_exists(EtkOS::get_profile().'/.eope/plugins/'.$name.'.php'))
 			{
@@ -35,36 +47,45 @@ class PluginManager
 			}
 		}
 		
-		if (array_key_exists($name, self::$plugins))
+		if (array_key_exists($name, $this->plugins))
 		{
 			Etk::Warning(__CLASS__, 'Plugin '.$name.' is already loaded.');
 			return;
 		}
 		
 		$plugin = $name.'Plugin';
-		self::$plugins[$name] = new $plugin();
+		$this->plugins[$name] = new $plugin();
+
 	}
 	
 	public function unload ($name)
 	{
-		if (!array_key_exists($name, self::$plugin))
+		if (!array_key_exists($name, $this->plugin))
 		{
 			Etk::Error(__CLASS__, 'Cannot unload '.$name.' plugin: the plugin is not loaded.');
 		}
-		self::$plugins[$name]->__destruct();
-		unset(self::$plugins[$name]);
+		$this->plugins[$name]->__destruct();
+		unset($this->plugins[$name]);
 	}
 	
 	public function run_event ($event, $args = array())
 	{
+		
 		if (!(bool)$event)
 		{
+			Etk::Trace(__CLASS__,'No valid event specified');
 			return;
 		}
-		$event = 'on_'.$event;
-		foreach (self::$plugins as $plugin)
+		$method = 'on_'.trim($event);
+		echo count($this->plugins);
+		foreach ($this->plugins as $key => $plugin)
 		{
-			$plugin->$event($args);
+			$events = $plugin->get_handled_events();
+
+			if (in_array($event, $events))
+			{
+				$plugin->$method($args);
+			}
 		}
 	}
 }

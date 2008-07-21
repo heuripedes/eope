@@ -10,12 +10,14 @@ class MainWindow extends EtkWindow
     public $config = null;
 
     public $document_manager = null;
+    public $sidepanel_manager = null;
+    public $bottompanel_manager = null;
 
-    public function __construct (EtkApplication $application)
+    public function __construct (Eope $application)
     {
         parent::__construct($application);
 
-        $config = new ConfigurationManager();
+        $config = ConfigManager::get_instance();
 
         $this->create_from_glade(EOPE_ROOT . '/eope.glade','main_window');
 
@@ -24,7 +26,14 @@ class MainWindow extends EtkWindow
         $this->document_manager = new DocumentManager($application, $this);
         $this->widget('editor_vbox')->pack_start($this->document_manager);
         $this->widget('editor_vbox')->show_all();
-
+		
+		$this->sidepanel_manager = new PanelManager($application, $this);
+        $this->widget('side_panel')->pack_start($this->sidepanel_manager);
+        $this->widget('side_panel')->show_all();
+        
+        $this->bottompanel_manager = new PanelManager($application, $this);
+        $this->widget('bottom_panel')->pack_start($this->bottompanel_manager);
+        $this->widget('bottom_panel')->show_all();
 
         $this->widget('tab_combo')->set_active(6);
         
@@ -34,9 +43,10 @@ class MainWindow extends EtkWindow
         $this->refresh();
         $this->activate_widgets();
         
-        
         $this->widget('side_panel')->set_visible((bool)$config->get('side_panel.visible'));
        	$this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
+       	
+       	PluginManager::get_instance()->run_event('main_window_create', array($this));
     }
 
     public function auto_connect ()

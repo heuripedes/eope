@@ -267,5 +267,3 @@ class DocumentManager extends GtkNotebook
         return $files;
     }
 }
-
-?>

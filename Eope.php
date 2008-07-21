@@ -11,22 +11,23 @@ require_once('Etk/Application.php');
 require_once('MainWindow.php');
 require_once('FileDialogs.php');
 require_once('ProjTree.php');
-require_once('ConfigurationManager.php');
+require_once('ConfigManager.php');
 require_once('PluginManager.php');
+require_once('PanelManager.php');
 require_once('DocumentManager.php');
 
 
 class Eope extends EtkApplication
 {
-    public $documents = array();
-    public $doc_manager = null;
-    public $config = null;
     protected $langlist = array();
+    protected $plugin_manager ;
     
     public function __construct ()
     {
-        $config = new ConfigurationManager();
+        $config = ConfigManager::get_instance();
         $config->load();
+        $this->plugin_manager = PluginManager::get_instance();
+        $this->plugin_manager->load('DirectoryView');
         
         parent::__construct();
     	
@@ -64,6 +65,7 @@ class Eope extends EtkApplication
 			}
 		}
 		
+		
         $this->run();
     }
     
@@ -79,7 +81,7 @@ class Eope extends EtkApplication
 	
 	public function terminate ()
 	{
-		$config = new ConfigurationManager();
+		$config = ConfigManager::get_instance();
 		$files = implode(':', $this->window->document_manager->get_open_files());
 		$config->set('files.last_files', $files);
 		$config->store();
