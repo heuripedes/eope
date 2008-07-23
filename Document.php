@@ -38,7 +38,14 @@ class Document extends GtkSourceView
     
     public function undo ()
     {
-        $this->buffer->undo();
+    	if ($this->buffer->can_undo())
+    	{
+        	$this->buffer->undo();
+		}
+		else
+		{
+			$this->set_modified(false);
+		}
     }
 
     public function redo ()
@@ -198,6 +205,7 @@ class Document extends GtkSourceView
 		{
 			$text = file_get_contents($this->filename);
 			$this->set_text($text, true);
+			$this->set_modified(false);
 			
 			return true;
 		}
@@ -224,6 +232,7 @@ class Document extends GtkSourceView
 	
     public function refresh_options ()
     {
+    	$modified = $this->get_modified();
     	$conf = ConfigManager::get_instance();
     	$n = $conf->get('editor.tab_style') ;
     	$width = array(2, 3, 4, 8);
@@ -243,5 +252,7 @@ class Document extends GtkSourceView
 		$this->modify_font(new PangoFontDescription($conf->get('editor.font')));
         
         $this->set_cursor_visible(true);
+        
+        $this->set_modified($modified);
     }
 }

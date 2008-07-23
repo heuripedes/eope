@@ -138,7 +138,7 @@ abstract class EtkWindow extends EtkObject
 
     public function refresh ()
     {
-        $this->window->show_all();
+        $this->window->show();
     }
 
     public function __call ($method, $params)

@@ -2,8 +2,6 @@ TODO:
 
 - CODE
 finish directory view plugin
-integrate the plugin manager with the application
-convert pastebin feature to a plugin
 finish menu signals
-implement clipboard functions.
 - FEATURES
+multiple sessions

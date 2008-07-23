@@ -14,6 +14,8 @@ class DirectoryViewPlugin extends Plugin
     protected $icons = array ();
     protected $txt_renderer = null;
     protected $ico_renderer = null;
+    
+    protected static $cwd = '.';
 	
 	public function __construct ()
 	{
@@ -67,13 +69,16 @@ class DirectoryViewPlugin extends Plugin
         $this->menu->set_image(GtkImage::new_from_pixbuf($this->icons['menu']));
         $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
         $this->treeview->connect('button-press-event', array($this, '_on_treeview_button_press_event'));
-        
-		echo __CLASS__." loaded \n";
+
+	}
+	
+	public function get_handled_events ()
+	{
+		return array('main_window_create');
 	}
 	
 	public function _on_treeview_button_press_event ($widget, $event)
     {
-    	echo "\nasdmaksdmkas\n";
         if ($event->type != Gdk::_2BUTTON_PRESS || $event->button != 1) // if double-left-click
         {
             return;
@@ -89,7 +94,6 @@ class DirectoryViewPlugin extends Plugin
         }
 
         $this->window->document_manager->open_document($model->get_value($iter, 2));
-        //$this->window->refresh();
     }
     
 	public function _on_menu_activate ()
@@ -102,6 +106,11 @@ class DirectoryViewPlugin extends Plugin
         $this->window->refresh();
 	}
 	
+	public static function get_cwd ()
+	{
+		return self::$cwd;
+	}
+	
 	public function load_dir ($dir)
 	{
         $this->treeview->set_model(null);
@@ -111,6 +120,7 @@ class DirectoryViewPlugin extends Plugin
 		$this->read_dir($dir, $root);
 		
 		$this->treeview->set_model($this->store);
+		self::$cwd = realpath($dir);
 	}
 	
 	protected function read_dir ($dir, $parent = null)
@@ -150,16 +160,12 @@ class DirectoryViewPlugin extends Plugin
         }
 	}
 	
-	public function get_handled_events ()
+	public function on_main_window_create (MainWindow $window)
 	{
-		return array('main_window_create');
-	}
-	
-	public function on_main_window_create ($args)
-	{
-		$window = $args[0];
-		
+		//$window = $args[0];
+
 		$window->sidepanel_manager->add_panel($this->vbox,'Directory view');
+		$window->sidepanel_manager->show_all();
 		
 		$accel = $window->get_accel_group();
 		$this->menu->add_accelerator('activate', $accel, ord('o'),
@@ -169,7 +175,7 @@ class DirectoryViewPlugin extends Plugin
 		$window->widget('file_menu_menu')->add($this->menu);
 		$window->widget('file_menu_menu')->reorder_child($this->menu, 2);
 		//$this->glade->get_widget('window')->remove($this->glade->get_widget('vbox5'));
-		$window->show_all();
+		$window->widget('file_menu_menu')->show_all();
 		$this->window = $window;
 	}
 }

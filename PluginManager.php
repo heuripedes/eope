@@ -54,8 +54,16 @@ class PluginManager
 		}
 		
 		$plugin = $name.'Plugin';
-		$this->plugins[$name] = new $plugin();
-
+		$plugin = new $plugin();
+		
+		if ($plugin->get_status() != false)
+		{
+			$this->plugins[$name] = $plugin;
+		}
+		else
+		{
+			$plugin->__destruct();
+		}
 	}
 	
 	public function unload ($name)
@@ -68,8 +76,11 @@ class PluginManager
 		unset($this->plugins[$name]);
 	}
 	
-	public function run_event ($event, $args = array())
+	public function run_event ()
 	{
+		$args = func_get_args();
+		$event = $args[0];
+		$args = array_slice($args, 1);
 		
 		if (!(bool)$event)
 		{
@@ -77,14 +88,14 @@ class PluginManager
 			return;
 		}
 		$method = 'on_'.trim($event);
-		echo count($this->plugins);
+		
 		foreach ($this->plugins as $key => $plugin)
 		{
 			$events = $plugin->get_handled_events();
 
 			if (in_array($event, $events))
 			{
-				$plugin->$method($args);
+				call_user_func_array(array($plugin, $method), $args);
 			}
 		}
 	}

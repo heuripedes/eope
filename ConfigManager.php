@@ -5,6 +5,9 @@ class ConfigManager extends EtkObject
 	const SEPARATOR = '.';
 	
 	protected static $config = array(
+		'eope' => array(
+			'plugins' => 'DirectoryView:Pastebin'
+			),
 		'ui' => array(
 			'width' => 640,
 			'height' => 480
@@ -24,9 +27,9 @@ class ConfigManager extends EtkObject
 			'reopen' => false,
 			'last_files' => ''
 			),
-		'plugins' => '',
+		
 		'side_panel' => array(
-			'visible' => false,
+			'visible' => true,
 			'width' => 100
 			),
 		'bottom_panel' => array(

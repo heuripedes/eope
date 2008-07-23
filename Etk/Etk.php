@@ -39,7 +39,7 @@ abstract class EtkObject
 
 class EtkOS
 {
-	// (c) Callicore Library
+	// (c) Callicore framework
 	public static function get_profile ()
 	{
 		if (stristr(PHP_OS, 'win'))
@@ -62,7 +62,7 @@ class EtkOS
 		{
 			if (isset($_ENV['HOME']))
 			{
-				return $_ENV['HOME'] . DS;
+				return $_ENV['HOME'] . DIRECTORY_SEPARATOR;
 			}
 			elseif ((stristr(PHP_OS, 'darwin') || stristr(PHP_OS, 'mac')) &&
 				isset($_ENV['USER']) && file_exists('/Users/' . $_ENV['USER']))

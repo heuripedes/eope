@@ -8,6 +8,8 @@ class MainWindowSignals extends EtkSignalHandler
     	$size = $this->window->get_size();
     	$conf->set('ui.width', $size[0]);
     	$conf->set('ui.height', $size[1]);
+    	$conf->set('side_panel.visible', $this->window->sidepanel_manager->is_visible());
+    	$conf->set('bottom_panel.visible', $this->window->bottompanel_manager->is_visible());
         $this->application->terminate();
     }
     
@@ -47,84 +49,22 @@ class MainWindowSignals extends EtkSignalHandler
 			$conf->set('editor.indent.spaces', false);
 		}
 		
-		$width = array(2, 3, 4, 8);
-		$conf->set('editor.tab_style', $n);// ($n > 3 ? $width[$n-4] : $width[$n]));
+		$conf->set('editor.tab_style', $n);
 		$document->refresh_options();
 	}
 
-    public function on_directory_tree_set_focus ()
-    {
-        $this->window->present();
-    }
-
 // tools menu
-	public function on_menu_tools_paste_php_activate ()
-	{
-		$document = $this->window->document_manager->get_document();
-		
-		if ($document === false)
-		{
-			return;
-		}
-		
-		$body ="parent_pid=&format=php";
-		$body .= "&code2=".$document->get_text();
-		$body .= "&poster=Eope&paste=Send&remember=1&expiry=m&email=";
-		
-		$request = "POST /pastebin.php HTTP/1.0\r\n";
-		$request .= "Host: php.pastebin.com\r\n";
-		$request .= "Accept: */*;q=0.1\r\n";
-		$request .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$request .= "Content-length: " . strlen($body). "\r\n\r\n";
-		$request .= $body;
-		$request .= "\r\n";
-		
-		$fp = fsockopen('php.pastebin.com', 80, $errno, $errstr, 30);
-		
-		$title = 'Error';
-		$message = "Cannot paste your code.\n$errno: $errstr\n";
-		$type = Gtk::MESSAGE_ERROR;
-		
-		if ($fp !== false)
-		{
-			fwrite($fp, $request);
-
-			$response = '';
-			while (!feof($fp))
-			{
-				$response .= fread($fp, 1024);
-			}
-			fclose($fp);
-
-			preg_match('/Location: http:\/\/php.pastebin.com\/([a-z0-9]+)/', $response, $results);
-			
-			if (isset($results[1]))
-			{
-				$title = 'Paste sucessful';
-				$message = "Your code has been pasted. Check it at:\n\nhttp://php.pastebin.com/".$results[1];
-				$type = Gtk::MESSAGE_INFO;
-			}
-			else
-			{
-				$message = "Cannot paste your code.";
-			}
-		}
-		
-		$dialog = new GtkMessageDialog (
-			$this->window->get_window(),
-			Gtk::DIALOG_MODAL, 
-			$type,
-			Gtk::BUTTONS_OK,
-			$message
-		);
-		$dialog->set_title($title);
-		$dialog->run();
-		$dialog->destroy();
-	}
 	
 	public function on_menu_tools_preferences_activate ()
 	{
-		$this->window->document_manager->open_document(EOPE_ROOT.'/eope.conf');
+		$userdir = EtkOS::get_profile();
+
+		if (file_exists($userdir . '/.eope/eope.conf'))
+		{
+			Etk::Trace(__CLASS__, 'Loading configuration from '.$userdir . '/.eope/eope.conf');
+			$this->window->document_manager->open_document($userdir . '/.eope/eope.conf');
+		}
+		
 	}
 	
     public function on_menu_tools_php_syntax_activate ()
@@ -145,10 +85,6 @@ class MainWindowSignals extends EtkSignalHandler
     }
 
 // tree buttons {
-    public function on_btn_tree_new_file_clicked ()
-    {
-    }
-
     public function on_btn_tree_refresh_clicked ()
     {
         $treeview = $this->window->widget('treeview');
@@ -172,7 +108,7 @@ class MainWindowSignals extends EtkSignalHandler
     }
 
 // view menu {
-	public function on_view_side_panel_activate ()
+	public function on_view_menu_side_panel_activate ()
     {
         $this->window->widget('side_panel')->set_visible(!$this->window->widget('side_panel')->is_visible());
     }

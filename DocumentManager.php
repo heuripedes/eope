@@ -25,7 +25,7 @@ class DocumentManager extends GtkNotebook
         $this->set_scrollable(true);
     }
 
-    public function on_change_tab ()
+    public function on_change_tab ($notebook, $gpointer, $page_num)
     {
     	$document = $this->get_document();
     	
@@ -41,25 +41,11 @@ class DocumentManager extends GtkNotebook
     	    return;
         }
         
-    	$pos = $document->get_cursor_pos();
-    	
-    	$this->mainwindow->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
-    	$this->mainwindow->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
+    	$this->update_status();
     	
     	$this->mainwindow->widget('menu_edit_undo')->set_sensitive($docbuffer->can_undo());
     	$this->mainwindow->widget('menu_edit_redo')->set_sensitive($docbuffer->can_redo());
 		
-		$title = $document->get_title();
-    	
-    	if ($document->get_modified())
-    	{
-    		$title .= '*';
-		}
-    	
-    	$this->mainwindow->set_title($title);
-    	$child = $this->get_nth_page($this->get_current_page());
-		$this->set_tab_label_text($child, $title);
-    	
     	$lang = $document->get_language_name();
     	
     	$index = $this->application->get_lang_index($lang);
@@ -67,9 +53,32 @@ class DocumentManager extends GtkNotebook
         
     }
     
+    public function update_status ()
+    {
+    	$document = $this->get_document();
+    	
+    	if ($document === false)
+    	{
+    		return;
+		}
+		
+    	$pos = $document->get_cursor_pos();
+    	
+    	$this->mainwindow->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
+    	$this->mainwindow->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
+    	
+    	$title = $document->get_title() . ($document->get_modified() ? '*' : '');
+    	$this->mainwindow->set_title($title);
+    	$child = $this->get_nth_page($this->get_current_page());
+		$this->set_tab_label_text($child, $title);
+		
+		//echo "\n-Filename: ".$document->get_filename()." Title: $title";
+		
+	}
     public function on_document_change ()
     {
-    	$this->on_change_tab();
+    	//$this->update_status();
+    	//$this->on_change_tab();
 	}
 
     public function close_document ($index = -1)
@@ -96,7 +105,7 @@ class DocumentManager extends GtkNotebook
     
     public function get_document ($index = -1)
     {
-        if ($index == -1)
+        if ($index < 0)
         {
             $index = $this->get_current_page();
         }
@@ -174,7 +183,14 @@ class DocumentManager extends GtkNotebook
 		
 		if (is_string($filename) && strlen($filename) > 0)
         {
+        	if (($page = array_search($filename, $this->get_open_files())) !== false)
+			{
+				$this->set_current_page($page);
+				return;
+			}
+			
         	$document->set_filename($filename);
+        	
             if ($document->load() === false)
             {
             	return;
@@ -182,14 +198,16 @@ class DocumentManager extends GtkNotebook
         }
 
         $title = basename($filename);
-
+		
         if ($filename === null)
         {
             $title = 'Untitled ' . (++$this->untitled_count);
         }
         
         $document->set_title($title);
-
+		
+		//echo "\nFilename: $filename, Title: $title";
+		
         $swindow = new GtkScrolledWindow ();
         $swindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         $swindow->add($document);
@@ -243,18 +261,18 @@ class DocumentManager extends GtkNotebook
         $this->set_current_page($page);
         
         $document->grab_focus();
-        //$document->set_parent_tab($this->get_current_page());
         
-        $document->connect_simple('move-cursor', array($this, 'on_document_change'));
-		$document->get_buffer()->connect_simple('changed', array($this, 'on_document_change'));
+        $document->connect_simple('move-cursor', array($this, 'update_status'));
+		$document->get_buffer()->connect_simple('changed', array($this, 'update_status'));
 		
 		$this->mainwindow->set_title($title);
-		$this->on_change_tab();
 		
     	$index = $this->application->get_lang_index($language);
 		$this->mainwindow->widget('lang_combo')->set_active($index);
-		
+		//echo "\nFilename: $filename, Title: $title";
         $this->documents[] = $document;
+        
+        //$this->on_change_tab();
     }
 
     public function get_open_files ()

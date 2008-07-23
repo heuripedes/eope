@@ -18,6 +18,7 @@ class PanelManager extends GtkNotebook
 	
 	public function set_visible ($visible, $all = true)
 	{
+		echo "visible = $visible\n";
 		$this->update();
 		parent::set_visible($visible, $all);
 	}

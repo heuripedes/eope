@@ -1,18 +1,14 @@
 
 [project]
 name=Eope
-base_path=C:\\Dev\\Eope\\eope
+base_path=/home/higor/eope/
 make_in_base_path=false
 description=
 run_cmd=
 
 [files]
-current_page=7
-FILE_NAME_0=895;4;0;16;0;1;0;C:\\Dev\\Eope\\eope\\DocumentManager.php;
-FILE_NAME_1=980;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\Document.php;
-FILE_NAME_2=6986;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindowSignals.php;
-FILE_NAME_3=453;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\MainWindow.php;
-FILE_NAME_4=31609;7;0;16;1;1;0;C:\\Dev\\Eope\\xtras\\textflow-0.2.3.2\\TextFlow\\ui\\MainWindow.py;
-FILE_NAME_5=984;4;0;0;1;1;0;C:\\Dev\\Eope\\eope\\Eope.php;
-FILE_NAME_6=171;20;0;16;1;1;0;C:\\Dev\\Eope\\eope\\TODO.txt;
-FILE_NAME_7=1792;4;0;16;1;1;0;C:\\Dev\\Eope\\eope\\ConfigManager.php;
+current_page=0
+FILE_NAME_0=281;4;0;16;1;1;0;/home/higor/eope/Plugin.php;
+FILE_NAME_1=185;4;0;16;1;1;0;/home/higor/eope/Plugins/Pastebin.php;
+FILE_NAME_2=674;4;0;16;1;1;0;/home/higor/eope/Etk/Etk.php;
+FILE_NAME_3=80;20;0;16;1;1;0;/home/higor/eope/TODO.txt;
