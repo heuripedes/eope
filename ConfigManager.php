@@ -95,7 +95,7 @@ class ConfigManager extends EtkObject
 			return;
 		}
 		$userdir = EtkOS::get_profile();
-		
+
 		if (!file_exists($userdir))
 		{
 			Etk::Error(__CLASS__, 'Cannot find user directory. The configuration will cannot be stored.');

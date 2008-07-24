@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Wed Oct  4 00:33:06 2006 -->
+<!--Generated with glade3 3.4.5 on Thu Jul 24 15:08:46 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">640</property>
     <property name="height_request">480</property>
     <property name="title" translatable="yes">Eope</property>
+    <property name="window_position">GTK_WIN_POS_CENTER</property>
     <property name="default_width">640</property>
     <property name="default_height">480</property>
     <property name="icon_name">gtk-edit</property>
@@ -101,7 +102,6 @@
                         <property name="sensitive">False</property>
                         <property name="label" translatable="yes">Save _as...</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_file_menu_save_as_activate"/>
                         <accelerator key="S" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK" signal="activate"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="menu-item-image39">
@@ -306,6 +306,20 @@
                         </child>
                       </widget>
                     </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="menu_tools_plugins">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Plugins...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menu_tools_plugins_activate"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image19">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-preferences</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
                   </widget>
                 </child>
               </widget>
@@ -449,15 +463,7 @@
                 </child>
                 <child>
                   <widget class="GtkHBox" id="fake_status_bar">
-                    <property name="spacing">7</property>
-                    <child>
-                      <widget class="GtkVSeparator" id="vseparator1">
-                        <property name="visible">True</property>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                      </packing>
-                    </child>
+                    <property name="spacing">12</property>
                     <child>
                       <widget class="GtkLabel" id="line_label">
                         <property name="visible">True</property>
@@ -467,7 +473,6 @@
                         <property name="expand">False</property>
                         <property name="fill">False</property>
                         <property name="padding">1</property>
-                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -478,7 +483,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -488,7 +493,8 @@
                         <signal name="changed" handler="on_lang_combo_changed"/>
                       </widget>
                       <packing>
-                        <property name="position">3</property>
+                        <property name="expand">False</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -505,16 +511,8 @@ Soft tabs (8)</property>
                         <signal name="changed" handler="on_tab_combo_changed"/>
                       </widget>
                       <packing>
-                        <property name="position">4</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="GtkVSeparator" id="vseparator2">
-                        <property name="visible">True</property>
-                      </widget>
-                      <packing>
                         <property name="expand">False</property>
-                        <property name="position">5</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </widget>

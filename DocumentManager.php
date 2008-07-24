@@ -25,7 +25,7 @@ class DocumentManager extends GtkNotebook
         $this->set_scrollable(true);
     }
 
-    public function on_change_tab ($notebook = null, $gpointer = null, $page_num = null)
+    public function on_change_tab ()
     {
     	$document = $this->get_document();
     	
@@ -75,7 +75,6 @@ class DocumentManager extends GtkNotebook
 		//echo "\n-Filename: ".$document->get_filename()." Title: $title";
 		
 	}
-    
     public function on_document_change ()
     {
     	//$this->update_status();
@@ -122,20 +121,12 @@ class DocumentManager extends GtkNotebook
     public function save_all ()
     {
         for ($i=count($this->documents);$i--;)
-        {
             $this->save_document($i);
-		}
     }
     
     public function save_document ($index = -1)
     {
-		$document = $this->get_document(($index === true? -1 : $index));
-		
-		if ($document === false)
-		{
-			return;
-		}
-		
+		$document = $this->get_document($index);
     	$filename = trim($document->get_filename());
     	
     	if ($filename == '' || $index === true)
@@ -152,9 +143,8 @@ class DocumentManager extends GtkNotebook
 				$document->set_filename($filename);
 				$document->set_title(basename($filename));
 				//$this->set_tab_label_text($child, $document->get_title());
-				$document->get_buffer()->set_modified(false);
 				$this->on_change_tab();
-				
+				$document->get_buffer()->set_modified(false);
 			}
 			return;
 		}

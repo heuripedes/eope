@@ -5,7 +5,7 @@ require_once('Etk/SignalHandler.php');
 abstract class EtkWindow extends EtkObject
 {
     protected $signal_handler = null;
-    protected $glade = null;
+    public $glade = null;
     protected $glade_mode = false;
     protected $glade_file = '';
     protected $accel_group = null;

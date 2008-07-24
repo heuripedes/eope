@@ -11,7 +11,6 @@ require_once('Etk/Etk.php');
 require_once('Etk/Application.php');
 require_once('MainWindow.php');
 require_once('FileDialogs.php');
-require_once('ProjTree.php');
 require_once('ConfigManager.php');
 require_once('PluginManager.php');
 require_once('PanelManager.php');
@@ -38,12 +37,11 @@ class Eope extends EtkApplication
         		$this->plugin_manager->load($plugin);
 			}
 		}
-        
-        //$this->plugin_manager->load('DirectoryView');
-        //$this->plugin_manager->load('StatusIcon');
-        //$this->plugin_manager->load('Pastebin');
-        
+		
         parent::__construct();
+        
+        
+        
         
         if ((bool)$config->get('files.reopen'))
 		{

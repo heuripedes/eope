@@ -1,6 +1,7 @@
 <?php
 
 require_once('MainWindowSignals.php');
+require_once('PluginList.php');
 
 class MainWindow extends EtkWindow
 {
@@ -10,6 +11,12 @@ class MainWindow extends EtkWindow
     public $document_manager = null;
     public $sidepanel_manager = null;
     public $bottompanel_manager = null;
+    
+    public $statusbar = null;
+    public $lang_combo = null;
+    public $tab_combo = null;
+    public $line_label = null;
+    public $column_label = null;
 
     public function __construct (Eope $application)
     {
@@ -74,6 +81,20 @@ class MainWindow extends EtkWindow
     	parent::auto_connect();
 	}
 	
+	public function set_statusbar_styles ()
+	{
+		
+		Gtk::rc_parse_string("
+			style 'status_widget'
+			{
+				xthickness = 0
+                ythickness = 0
+			}
+			widget '*fake_status_bar*' style 'status_widget'
+		");
+		$this->widget('fake_status_bar')->set_name('fake_status_bar');
+	}
+	
 	public function activate_widgets ($active = false)
 	{
 		PluginManager::get_instance()->run_event('activate_widgets', $active);
@@ -83,6 +104,8 @@ class MainWindow extends EtkWindow
 		$this->widget('file_menu_save_as')->set_sensitive($active);
 		$this->widget('file_menu_close')->set_sensitive($active);
 		$this->widget('edit_menu')->set_sensitive($active);
+		
+		
 	}
 }
 

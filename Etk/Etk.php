@@ -60,6 +60,7 @@ class EtkOS
 		}
 		else
 		{
+			
 			if (isset($_ENV['HOME']))
 			{
 				return $_ENV['HOME'] . DIRECTORY_SEPARATOR;
@@ -74,7 +75,23 @@ class EtkOS
 			{
 				return '/home/' . $_ENV['USER'] . DIRECTORY_SEPARATOR;
 			}
+			
+			if (isset($_SERVER['HOME']))
+			{
+				return $_SERVER['HOME'] . DIRECTORY_SEPARATOR;
+			}
+			elseif ((stristr(PHP_OS, 'darwin') || stristr(PHP_OS, 'mac')) &&
+				isset($_SERVER['USER']) && file_exists('/Users/' . $_SERVER['USER']))
+			{
+				return '/Users/' . $_SERVER['USER'] . DIRECTORY_SEPARATOR;
+			}
+			elseif (isset($_SERVER['USER']) &&
+				file_exists('/home/' . $_SERVER['USER']))
+			{
+				return '/home/' . $_SERVER['USER'] . DIRECTORY_SEPARATOR;
+			}
 		}
+
 		return false;
 	}
 }

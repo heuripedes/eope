@@ -163,9 +163,9 @@ class Document extends GtkSourceView
 	
     public function set_language_by_mime ($mimetype)
     {
+    	$this->buffer->set_language(null);
     	if ($mimetype == 'text/plain')
     	{
-    		$this->buffer->set_highlight(false);
     		return;
 		}
         $langmngr = new GtkSourceLanguagesManager();
@@ -179,9 +179,9 @@ class Document extends GtkSourceView
     public function set_language_by_name ($language = 'none')
     {
         $language =  strtolower($language);
+        $this->buffer->set_language(null);
         if ($language == 'none')
         {
-            $this->buffer->set_highlight(false);
             return;
         }
 
@@ -192,6 +192,7 @@ class Document extends GtkSourceView
         {
             if (strtolower($lang->get_name()) == $language)
             {
+            	print_r($lang->get_mime_types());
                 $this->buffer->set_language($lang);
 		        $this->buffer->set_highlight(true);
                 return;

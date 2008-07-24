@@ -24,6 +24,7 @@ class PluginManager
 
 	public function load ($name)
 	{
+		echo "trying $name ";
 		if (!class_exists($name.'Plugin'))
 		{
 			if (file_exists(EtkOS::get_profile().'/.eope/plugins/'.$name.'.php'))
@@ -49,7 +50,7 @@ class PluginManager
 		
 		if (array_key_exists($name, $this->plugins))
 		{
-			Etk::Warning(__CLASS__, 'Plugin '.$name.' is already loaded.');
+			Etk::Warn(__CLASS__, 'Plugin '.$name.' is already loaded.');
 			return;
 		}
 		
@@ -64,11 +65,12 @@ class PluginManager
 		{
 			$plugin->__destruct();
 		}
+		echo "... loaded! \n";
 	}
 	
 	public function unload ($name)
 	{
-		if (!array_key_exists($name, $this->plugin))
+		if (!array_key_exists($name, $this->plugins))
 		{
 			Etk::Error(__CLASS__, 'Cannot unload '.$name.' plugin: the plugin is not loaded.');
 		}
@@ -98,5 +100,46 @@ class PluginManager
 				call_user_func_array(array($plugin, $method), $args);
 			}
 		}
+	}
+	
+	public function list_plugins ()
+	{
+		$path = EtkOS::get_profile() . '/.eope/';
+		if (file_exists($path) && !file_exists($path.'plugins'))
+		{
+			mkdir($path.'plugins');
+		}
+		$plugins = array();
+		$d = dir($path.'plugins');
+		
+		while (false != ($e = $d->read()))
+		{
+			if (@strtolower(end(explode('.', $e))) == 'php')
+			{
+				$name = substr($e, 0, strpos($e, '.'));
+				$plugins[] = array(
+					'name' => $name,
+					'loaded' => array_key_exists($name, $this->plugins)
+				);
+			}
+		}
+		$d->close();
+		
+		$d = dir(EOPE_ROOT . '/Plugins');
+		
+		while (false != ($e = $d->read()))
+		{
+			if (@strtolower(end(explode('.', $e))) == 'php')
+			{
+				$name = substr($e, 0, strpos($e, '.'));
+				$plugins[] = array(
+					'name' => $name,
+					'loaded' => array_key_exists($name, $this->plugins)
+				);
+			}
+		}
+		$d->close();
+		
+		return $plugins;
 	}
 }

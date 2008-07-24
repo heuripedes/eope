@@ -4,6 +4,7 @@ class MainWindowSignals extends EtkSignalHandler
 {
     public function on_main_window_destroy ()
     {
+    	PluginManager::get_instance()->run_event('main_window_destroy', $this->window);
     	$conf = ConfigManager::get_instance();
     	$size = $this->window->get_size();
     	$conf->set('ui.width', $size[0]);
@@ -64,7 +65,11 @@ class MainWindowSignals extends EtkSignalHandler
 			Etk::Trace(__CLASS__, 'Loading configuration from '.$userdir . '/.eope/eope.conf');
 			$this->window->document_manager->open_document($userdir . '/.eope/eope.conf');
 		}
-		
+	}
+	
+	public function on_menu_tools_plugins_activate ()
+	{
+		new PluginList($this->application);
 	}
 	
     public function on_menu_tools_php_syntax_activate ()
@@ -101,6 +106,8 @@ class MainWindowSignals extends EtkSignalHandler
             return;
         }
 
+        //$ptree = new ProjTree($this->window->widget('treeview'));
+        //$ptree->load_dir($model->get_value($iter, 2));
         $this->dir_tree->load_dir($model->get_value($iter, 2));
 
     }
@@ -140,11 +147,6 @@ class MainWindowSignals extends EtkSignalHandler
     public function on_file_menu_save_all_activate ()
     {
     	$this->window->document_manager->save_all();
-	}
-	
-	public function on_file_menu_save_as_activate ()
-	{
-		$this->window->document_manager->save_document(true);
 	}
 
 // edit menu

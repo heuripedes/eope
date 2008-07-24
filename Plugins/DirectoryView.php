@@ -178,4 +178,9 @@ class DirectoryViewPlugin extends Plugin
 		$window->widget('file_menu_menu')->show_all();
 		$this->window = $window;
 	}
+	
+	public function __destruct ()
+	{
+		$this->window->sidepanel_manager->remove_panel($this->vbox);
+	}
 }
