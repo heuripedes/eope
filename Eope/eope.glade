@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Jul 25 19:19:02 2008 -->
+<!--Generated with glade3 3.4.5 on Fri Jul 25 23:51:47 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">640</property>
@@ -30,8 +30,8 @@
                         <property name="label" translatable="yes">_New</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_file_menu_new_activate"/>
-                        <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+                        <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="menu-item-image34">
                             <property name="visible">True</property>

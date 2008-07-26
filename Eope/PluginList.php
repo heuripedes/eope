@@ -7,13 +7,10 @@ class PluginList extends EtkWindow
 	protected $store = null;
 	protected $plugins = array();
 	
-	public function __construct (Eope $application)
+	public function __construct ()
 	{
-		parent::__construct($application);
-		
-		$this->create_from_glade(EOPE_ROOT . '/pluginwindow.glade','window');
-        $this->auto_signal_handler(__CLASS__);
-        $this->auto_connect();
+		parent::__construct(APP_DIR . '/pluginwindow.glade','window');
+		$this->connect_glade_to(new PluginListSignals($this));
         
         $treeview = $this->widget('treeview');
         

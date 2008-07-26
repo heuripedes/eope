@@ -1,8 +1,12 @@
 <?php
 
-class PluginListSignals extends EtkSignalHandler
+class PluginListSignals
 {
-	
+	protected $window;
+	public function __construct ($window)
+	{
+		$this->window = $window;
+	}
 	public function on_toggle ($renderer, $row, $store)
 	{
 		$iter = $store->get_iter($row);

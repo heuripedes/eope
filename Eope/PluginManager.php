@@ -117,7 +117,7 @@ class PluginManager
 	
 	public function list_plugins ()
 	{
-		$path = EtkOS::get_profile() . '/.eope/';
+		$path = HOME_DIR . '/.eope/';
 		if (file_exists($path) && !file_exists($path.'plugins'))
 		{
 			mkdir($path.'plugins');
@@ -138,7 +138,7 @@ class PluginManager
 		}
 		$d->close();
 		
-		$d = dir(EOPE_ROOT . '/Plugins');
+		$d = dir(APP_DIR . '/Plugins');
 		
 		while (false != ($e = $d->read()))
 		{

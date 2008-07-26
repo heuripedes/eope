@@ -19,6 +19,7 @@ require_once(APP_DIR . 'PluginManager.php');
 require_once(APP_DIR . 'PanelManager.php');
 require_once(APP_DIR . 'DocumentManager.php');
 require_once(APP_DIR . 'EopeSignals.php');
+require_once(APP_DIR . 'PluginList.php');
 
 class Eope extends EtkApplication
 {
@@ -132,6 +133,7 @@ class Eope extends EtkApplication
 	
 	public function terminate ()
 	{
+
 		$config = ConfigManager::get_instance();
 		
 		$files = array_map('urlencode', $this->document_manager->get_open_files());
@@ -147,7 +149,9 @@ class Eope extends EtkApplication
 		$config->store();
 		
 		PluginManager::get_instance()->run_event('application_terminate');
+		
 		parent::terminate();
+		
 		//$files = $this->mainwindow->document_manager->get_modified_files();
 	}
 }

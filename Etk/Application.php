@@ -17,7 +17,6 @@ abstract class EtkApplication extends EtkWindow
     public function terminate ()
     {
         Gtk::main_quit();
-        exit;
     }
 	
     public function get_application ()

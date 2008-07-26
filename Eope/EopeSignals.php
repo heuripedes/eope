@@ -22,16 +22,16 @@ class EopeSignals
     			);
     		$win->set_title('Confirmation');
     		$win->show_all();
-    		switch ($win->run())
+    		
+    		if ($win->run() == Gtk::RESPONSE_YES)
     		{
-    			case Gtk::RESPONSE_YES:
-    				$app->document_manager->save_all();
-    				$app->terminate();
-    				break;
-    			case Gtk::RESPONSE_NO: $app->terminate(); break;
+    			$app->document_manager->save_all();
 			}
+			
 			$win->destroy();
 		}
+
+		$app->terminate();
     }
     
     public function on_lang_combo_changed ()
@@ -90,7 +90,7 @@ class EopeSignals
 	
 	public function on_menu_tools_plugins_activate ()
 	{
-		new PluginList($this->application);
+		new PluginList();
 	}
 	
 // view menu {
