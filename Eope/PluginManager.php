@@ -35,10 +35,17 @@ class PluginManager
 			}
 		}
 	}
+	public function unload_plugins ()
+	{
+		foreach (array_keys($this->plugins) as $name)
+		{
+			$this->unload($name);
+		}
+	}
 
 	public function load ($name)
 	{
-		echo "[PluginManager] Trying to load $name...";
+		echo "[PluginManager] Loading $name...\n";
 		
 		if (!class_exists($name.'Plugin'))
 		{
@@ -63,33 +70,36 @@ class PluginManager
 		
 		if (array_key_exists($name, $this->plugins))
 		{
-			echo " already loaded.\n";
+			echo "[PluginManager] $name is already loaded.\n";
 			return;
 		}
 		
 		$plugin = $name.'Plugin';
 		$plugin = new $plugin();
 		
-		if ($plugin->get_status() != false)
+		if ($plugin->get_status() === true)
 		{
 			$this->plugins[$name] = $plugin;
+			$this->plugins[$name]->on_load();
+			return;
 		}
-		else
-		{
-			$plugin->__destruct();
-		}
-		echo " loaded! \n";
+		$plugin->__destruct();
+		echo "[PluginManager] $name cannot be loaded. (status = false)\n";
 	}
 	
 	public function unload ($name)
 	{
 		if (!array_key_exists($name, $this->plugins))
 		{
-			Etk::Error(__CLASS__, 'Cannot unload '.$name.' plugin: the plugin is not loaded.');
+			echo "[PluginManager] Cannot unload $name plugin: the plugin is not loaded.\n";
+			return;
 		}
+		$this->plugins[$name]->on_unload();
 		$this->plugins[$name]->__destruct();
 		unset($this->plugins[$name]);
 	}
+	
+	
 	
 	public function run_event ()
 	{
@@ -152,7 +162,7 @@ class PluginManager
 			}
 		}
 		$d->close();
-		
+
 		return $plugins;
 	}
 }

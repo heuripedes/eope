@@ -193,6 +193,7 @@ class DocumentManager extends GtkNotebook
         if ($filename === null)
         {
             $title = 'Untitled ' . (++$this->untitled_count);
+            $document->set_modified(true);
         }
         
         $document->set_title($title);

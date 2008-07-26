@@ -78,10 +78,10 @@ class ConfigManager
 	
 	public function load ()
 	{
-		if (file_exists(HOME_DIR . '/.eope/eope.conf'))
+		if (file_exists(HOME_DIR . '.eope/eope.conf'))
 		{
 			echo "Loading configuration from " . HOME_DIR . ".eope/eope.conf\n";
-			$this->load_from_file(HOME_DIR . '/.eope/eope.conf', true);
+			$this->load_from_file(HOME_DIR . '.eope/eope.conf', true);
 		}
 	}
 	
@@ -98,12 +98,12 @@ class ConfigManager
 			throw new EtkException('Cannot find user directory. The configuration will cannot be stored.');
 		}
 		
-		if (!is_dir(HOME_DIR . '/.eope'))
+		if (!is_dir(HOME_DIR . '.eope'))
 		{
-			mkdir(HOME_DIR .'/.eope');
+			mkdir(HOME_DIR .'.eope');
 		}
 		
-		$path = HOME_DIR .'/.eope/';
+		$path = HOME_DIR .'.eope/';
 		$fp = fopen($path . 'eope.conf', 'w');
 		
 		if (!(bool)$fp)
@@ -138,7 +138,7 @@ class ConfigManager
 			}
 		}
 		
-		echo "[ConfigManager] Storing the configuration in $path eope.conf\n";
+		echo "[ConfigManager] Storing the configuration in {$path}eope.conf\n";
 		fwrite($fp, $out);
 		fclose($fp);
 	}

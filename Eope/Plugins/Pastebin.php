@@ -7,15 +7,6 @@ class PastebinPlugin extends Plugin
 	
 	public function __construct ()
 	{
-	}
-	
-	public function get_handled_events ()
-	{
-		return array('main_window_create', 'activate_widgets');
-	}
-	
-	public function on_main_window_create ()
-	{
 		$app = Etk::get_app();
 
 		$git = GtkIconTheme::get_default();
@@ -25,15 +16,20 @@ class PastebinPlugin extends Plugin
         $this->menu->set_image(GtkImage::new_from_pixbuf($icon));
         $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
         
-        $accel = $app->get_accel_group();
-		$this->menu->add_accelerator('activate', $accel, ord('p'),
-			Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+        //($menu, $widget, $position, $accelmask = null, $key = null)
+        $this->add_to_menu('tools', $this->menu, 0, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, 'p');
 		
 		$this->menu->set_sensitive(false);
+	}
 	
-		Etk::get_app()->widget('tools_menu_menu')->add($this->menu);
-		Etk::get_app()->widget('tools_menu_menu')->reorder_child($this->menu, 0);
-		Etk::get_app()->widget('tools_menu_menu')->show_all();
+	public function __destruct ()
+	{
+		$this->remove_from_menu('tools', $this->menu);
+	}
+	
+	public function get_handled_events ()
+	{
+		return array('activate_widgets');
 	}
 	
 	public function on_activate_widgets ($active)

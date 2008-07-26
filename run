@@ -1,2 +1,2 @@
 #!/bin/sh
-php run.php $@
+/usr/local/bin/php run.php $@

@@ -12,7 +12,6 @@ class PanelManager extends GtkNotebook
 	protected function update ()
 	{
 		$this->set_show_tabs($this->get_n_pages() > 1);
-		
 	}
 	
 	public function set_visible ($visible, $all = true)
@@ -37,6 +36,7 @@ class PanelManager extends GtkNotebook
 		{
 			$label = 'Page '.count($this->panels);
 		}
+		//echo "[PanelManager] Adding $label\n";
 		$this->update();
 		$page = $this->append_page($child, new GtkLabel($label));
 		$this->show_all();
@@ -49,8 +49,10 @@ class PanelManager extends GtkNotebook
 		{
 			$index = $this->page_num($index);
 		}
+		//echo "[PanelManager] Removing $index\n";
 		$this->remove_page($index);
 		unset($this->panels[$index]);
+		sort($this->panels);
 		$this->update();
 	}
 }

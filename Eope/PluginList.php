@@ -5,7 +5,6 @@ require_once('PluginListSignals.php');
 class PluginList extends EtkWindow
 {
 	protected $store = null;
-	protected $plugins = array();
 	
 	public function __construct ()
 	{
@@ -40,11 +39,6 @@ class PluginList extends EtkWindow
         $this->refresh();
 	}
 	
-	public function get_list ()
-	{
-		return $this->plugins;
-	}
-	
 	public function get_store ()
 	{
 		return $this->store;
@@ -63,7 +57,6 @@ class PluginList extends EtkWindow
 			$plugin = $plugins[$i];
 			$store->append(array($plugin['name'], $plugin['loaded']));
 		}
-		$this->plugins = $plugins;
 		$treeview->show_all();
 	}
 }

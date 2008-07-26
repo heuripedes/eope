@@ -20,7 +20,8 @@ class PluginListSignals
 	
 	public function on_btn_apply_clicked ()
 	{
-		$current = $this->window->get_list();
+		$current = PluginManager::get_instance()->list_plugins();
+		
 		$store= $this->window->get_store();
 		$iter = $store->get_iter(0);
 		$i = 0;
@@ -29,18 +30,23 @@ class PluginListSignals
 			$name = $store->get_value($iter, 0);
 			$load = $store->get_value($iter, 1);
 			
-			echo "$name [{$current[$i]['loaded']}] == $load\n";
+			echo "$name [";
+			echo $current[$i]['loaded'] ? 'loaded' : 'unloaded' ;
+			echo "] " . ($load?'load!':'unload')."\n";
 			
-			if ($load == true && $current[$i]['loaded'] === false)
+			if ($current[$i]['loaded'] != $load)
 			{
-				PluginManager::get_instance()->load($name);
+				switch($load)
+				{
+					case true: PluginManager::get_instance()->load($name); break;
+					case false: PluginManager::get_instance()->unload($name); break;
+				}
 			}
-			elseif ($load == false && $current[$i]['loaded'] === true)
-			{
-				PluginManager::get_instance()->unload($name);
-			}
+			
 			$iter = $store->iter_next($iter);
 			$i++;
 		}
+		
+		$this->window->destroy();
 	}
 }

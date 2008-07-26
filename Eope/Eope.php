@@ -131,9 +131,39 @@ class Eope extends EtkApplication
 		$this->langlist = array_map('strtolower', $this->langlist);
 	}
 	
+	public function on_client_quit ()
+	{
+		return;
+		$app = Etk::get_app();
+    	PluginManager::get_instance()->run_event('main_window_destroy');
+    	$modified = $app->document_manager->get_modified_files();
+
+    	if (count($modified) > 0)
+    	{
+    		$win = new GtkMessageDialog($app->get_window(),
+    			Gtk::DIALOG_MODAL,
+    			Gtk::MESSAGE_QUESTION,
+    			Gtk::BUTTONS_YES_NO,
+    			'Do you wish to save the modified files before leave Eope?'
+    			);
+    		$win->set_title('Confirmation');
+    		$win->show_all();
+    		
+    		if ($win->run() == Gtk::RESPONSE_YES)
+    		{
+    			$app->document_manager->save_all();
+			}
+			
+			$win->destroy();
+		}
+	}
+	
 	public function terminate ()
 	{
 
+		
+		
+		
 		$config = ConfigManager::get_instance();
 		
 		$files = array_map('urlencode', $this->document_manager->get_open_files());
@@ -148,11 +178,20 @@ class Eope extends EtkApplication
     	
 		$config->store();
 		
-		PluginManager::get_instance()->run_event('application_terminate');
+		$plugins = PluginManager::get_instance()->list_plugins();
+		
+		$tmp = '';
+		for ($i=0;$i<count($plugins); $i++)
+		{
+			if ($plugins[$i]['loaded'])
+			{
+				$tmp .= $plugins[$i]['name']  . ($i < count($plugins)-1 ? ':' : '');
+			}
+		}
+		
+		PluginManager::get_instance()->unload_plugins();
 		
 		parent::terminate();
-		
-		//$files = $this->mainwindow->document_manager->get_modified_files();
 	}
 }
 

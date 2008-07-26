@@ -13,8 +13,8 @@
 
 error_reporting(E_ALL | E_STRICT);
 
-define('ETK_DIR', '.' . DIRECTORY_SEPARATOR . 'Etk'  . DIRECTORY_SEPARATOR);
-define('APP_DIR', '.' . DIRECTORY_SEPARATOR . 'Eope'  . DIRECTORY_SEPARATOR);
+define('ETK_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Etk'  . DIRECTORY_SEPARATOR);
+define('APP_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Eope'  . DIRECTORY_SEPARATOR);
 
 if (in_array('--noterm', $_SERVER['argv']))
 {
@@ -23,7 +23,13 @@ if (in_array('--noterm', $_SERVER['argv']))
 
 
 require_once(ETK_DIR . 'Etk.php');
-Etk::run('Eope');
+try {
+	Etk::run('Eope');
+}
+catch (Exception $e)
+{
+	echo $e->getMessage();
+}
 
 if (in_array('--noterm', $_SERVER['argv']))
 {

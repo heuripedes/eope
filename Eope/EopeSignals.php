@@ -6,32 +6,10 @@ class EopeSignals
 	{
 	}
 	
-    public function on_main_window_destroy ()
+    public function on_main_window_hide ()
     {
-    	$app = Etk::get_app();
-    	PluginManager::get_instance()->run_event('main_window_destroy');
-    	$modified = $app->document_manager->get_modified_files();
-    	
-    	if (count($modified) > 0)
-    	{
-    		$win = new GtkMessageDialog($app->get_window(),
-    			Gtk::DIALOG_MODAL,
-    			Gtk::MESSAGE_QUESTION,
-    			Gtk::BUTTONS_YES_NO,
-    			'Do you wish to save the modified files before leave Eope?'
-    			);
-    		$win->set_title('Confirmation');
-    		$win->show_all();
-    		
-    		if ($win->run() == Gtk::RESPONSE_YES)
-    		{
-    			$app->document_manager->save_all();
-			}
-			
-			$win->destroy();
-		}
-
-		$app->terminate();
+    	Etk::get_app()->on_client_quit();
+		Etk::get_app()->terminate();
     }
     
     public function on_lang_combo_changed ()

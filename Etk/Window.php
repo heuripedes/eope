@@ -61,12 +61,9 @@ abstract class EtkWindow
 
         $widget = $this->glade->get_widget($widgetname);
 
-        if ($widget instanceof GtkWidget)
-        {
-            return $widget;
-        }
-
-        throw new Exception('Cannot find the widget.');
+        return $widget;
+		//echo $widgetname . "\n";
+        //throw new Exception('Cannot find the widget.');
     }
     
     public function get_accel_group ()

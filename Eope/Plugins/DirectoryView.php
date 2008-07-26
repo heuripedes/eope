@@ -19,62 +19,23 @@ class DirectoryViewPlugin extends Plugin
 	
 	public function __construct ()
 	{
-		$this->treeview = new GtkTreeView();
+		$this->create_widgets();
+
+		$app = Etk::get_app();
 		
-		$text_renderer = new GtkCellRendererText();
-        $icon_renderer = new GtkCellRendererPixbuf();
-
-        $column1 = new GtkTreeViewColumn();
-		$column2 = new GtkTreeViewColumn();
-
-        $column1->pack_start($icon_renderer, false);
-		$column1->set_attributes($icon_renderer, 'pixbuf', 0);
-
-        $column1->pack_start($text_renderer, false);
-		$column1->set_attributes($text_renderer, 'text', 1);
-		$column1->set_title('Files');
-		
-		$column2->pack_start($text_renderer, false);
-		$column2->set_attributes($text_renderer, 'text', 2);
-        $column2->set_visible(false);
-
-        $this->txt_renderer = $text_renderer;
-        $this->ico_renderer = $icon_renderer;
-
-        $git = GtkIconTheme::get_default();
-
-        $this->icons['folder'] = $git->load_icon('gtk-directory', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-        $this->icons['menu'] = $git->load_icon('gtk-open', 13.5, Gtk::ICON_LOOKUP_USE_BUILTIN);
-        $this->icons['folder_open'] = $git->load_icon('gtk-open', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-        $this->icons['file'] = $git->load_icon('gtk-file', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-        $this->icons['refresh'] = $git->load_icon('gtk-file', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-        
-        $icon_renderer->set_property('pixbuf-expander-open', $this->icons['folder_open']);
-        $icon_renderer->set_property('pixbuf-expander-closed', $this->icons['folder']);
-
-        $this->treeview->append_column($column1);
-		$this->treeview->append_column($column2);
-		
-		$this->store = new GtkTreeStore(GObject::TYPE_OBJECT, GObject::TYPE_STRING, GObject::TYPE_STRING);
-        $this->treeview->set_model($this->store);
-        
-        $this->vbox = new GtkVBox();
-		
-		$this->swindow = new GtkScrolledWindow ();
-        $this->swindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-        $this->swindow->add($this->treeview);
-        $this->vbox->pack_start($this->swindow);
-        
-        $this->menu = new GtkImageMenuItem('Open directory');
-        $this->menu->set_image(GtkImage::new_from_pixbuf($this->icons['menu']));
-        $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
-        $this->treeview->connect('button-press-event', array($this, '_on_treeview_button_press_event'));
-
+		$this->add_to_panel('side', $this->vbox, 'Directory view');
+		$this->add_to_menu('file', $this->menu, 2, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, '0');
+	}
+	
+	public function __destruct ()
+	{
+		$this->remove_from_panel('side', $this->vbox);
+		$this->remove_from_menu('file', $this->menu);
 	}
 	
 	public function get_handled_events ()
 	{
-		return array('main_window_create');
+		return array();
 	}
 	
 	public function _on_treeview_button_press_event ($widget, $event)
@@ -179,27 +140,57 @@ class DirectoryViewPlugin extends Plugin
         }
 	}
 	
-	public function on_main_window_create ()
+	protected function create_widgets ()
 	{
-		//$window = $args[0];
-		$app = Etk::get_app();
+		$this->treeview = new GtkTreeView();
 		
-		$app->sidepanel_manager->add_panel($this->vbox,'Directory view');
-		$app->sidepanel_manager->show_all();
+		$text_renderer = new GtkCellRendererText();
+        $icon_renderer = new GtkCellRendererPixbuf();
+
+        $column1 = new GtkTreeViewColumn();
+		$column2 = new GtkTreeViewColumn();
+
+        $column1->pack_start($icon_renderer, false);
+		$column1->set_attributes($icon_renderer, 'pixbuf', 0);
+
+        $column1->pack_start($text_renderer, false);
+		$column1->set_attributes($text_renderer, 'text', 1);
+		$column1->set_title('Files');
 		
-		$accel = Etk::get_app()->get_accel_group();
-		$this->menu->add_accelerator('activate', $accel, ord('o'),
-			Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+		$column2->pack_start($text_renderer, false);
+		$column2->set_attributes($text_renderer, 'text', 2);
+        $column2->set_visible(false);
+
+        $this->txt_renderer = $text_renderer;
+        $this->ico_renderer = $icon_renderer;
+
+        $git = GtkIconTheme::get_default();
+
+        $this->icons['folder'] = $git->load_icon('gtk-directory', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
+        $this->icons['menu'] = $git->load_icon('gtk-open', 13.5, Gtk::ICON_LOOKUP_USE_BUILTIN);
+        $this->icons['folder_open'] = $git->load_icon('gtk-open', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
+        $this->icons['file'] = $git->load_icon('gtk-file', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
+        $this->icons['refresh'] = $git->load_icon('gtk-file', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
         
+        $icon_renderer->set_property('pixbuf-expander-open', $this->icons['folder_open']);
+        $icon_renderer->set_property('pixbuf-expander-closed', $this->icons['folder']);
+
+        $this->treeview->append_column($column1);
+		$this->treeview->append_column($column2);
 		
-		Etk::get_app()->widget('file_menu_menu')->add($this->menu);
-		Etk::get_app()->widget('file_menu_menu')->reorder_child($this->menu, 2);
-		//$this->glade->get_widget('window')->remove($this->glade->get_widget('vbox5'));
-		Etk::get_app()->widget('file_menu_menu')->show_all();
-	}
-	
-	public function __destruct ()
-	{
-		Etk::get_app()->sidepanel_manager->remove_panel($this->vbox);
+		$this->store = new GtkTreeStore(GObject::TYPE_OBJECT, GObject::TYPE_STRING, GObject::TYPE_STRING);
+        $this->treeview->set_model($this->store);
+        
+        $this->vbox = new GtkVBox();
+		
+		$this->swindow = new GtkScrolledWindow ();
+        $this->swindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+        $this->swindow->add($this->treeview);
+        $this->vbox->pack_start($this->swindow);
+        
+        $this->menu = new GtkImageMenuItem('Open directory');
+        $this->menu->set_image(GtkImage::new_from_pixbuf($this->icons['menu']));
+        $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
+        $this->treeview->connect('button-press-event', array($this, '_on_treeview_button_press_event'));
 	}
 }
