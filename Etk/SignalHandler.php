@@ -1,6 +1,6 @@
 <?php
 
-abstract class EtkSignalHandler extends EtkObject
+abstract class EtkSignalHandler
 {
     public function __construct (EtkApplication $application, EtkWindow $window)
     {

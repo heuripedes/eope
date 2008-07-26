@@ -10,7 +10,7 @@ class PluginManager
 	
 	protected function __construct ()
 	{
-		
+
 	}
 	
 	public static function get_instance ()
@@ -21,36 +21,49 @@ class PluginManager
 		}
 		return self::$instance;
 	}
+	
+	public function load_plugins ()
+	{
+		$config = ConfigManager::get_instance();
+		$plugins = explode(':', $config->get('eope.plugins'));
+        
+        foreach($plugins as $plugin)
+        {
+        	if (trim($plugin))
+        	{
+        		$this->load($plugin);
+			}
+		}
+	}
 
 	public function load ($name)
 	{
-		echo "trying $name ";
+		echo "[PluginManager] Trying to load $name...";
+		
 		if (!class_exists($name.'Plugin'))
 		{
-			if (file_exists(EtkOS::get_profile().'/.eope/plugins/'.$name.'.php'))
+			if (file_exists(HOME_DIR.'.eope/plugins/'.$name.'.php'))
 			{
-				require_once(EtkOS::get_profile().'/.eope/plugins/'.$name.'.php');
+				require_once(HOME_DIR.'.eope/plugins/'.$name.'.php');
 			}
-			elseif (file_exists(EOPE_ROOT.'/Plugins/'.$name.'.php'))
+			elseif (file_exists(APP_DIR.'Plugins/'.$name.'.php'))
 			{
-				require_once(EOPE_ROOT.'/Plugins/'.$name.'.php');
+				require_once(APP_DIR.'/Plugins/'.$name.'.php');
 			}
 			else
 			{
-				Etk::Error(__CLASS__, 'Cannot load '.$name.' plugin: file not found.');
-				return;
+				throw new EtkException ('Cannot load '.$name.' plugin: file not found.');
 			}
 			
 			if (!class_exists($name.'Plugin'))
 			{
-				Etk::Error(__CLASS__,'Cannot load '.$name.' plugin: class not found.');
-				return;
+				throw new EtkException ('Cannot load '.$name.' plugin: class not found.');
 			}
 		}
 		
 		if (array_key_exists($name, $this->plugins))
 		{
-			Etk::Warn(__CLASS__, 'Plugin '.$name.' is already loaded.');
+			echo " already loaded.\n";
 			return;
 		}
 		
@@ -65,7 +78,7 @@ class PluginManager
 		{
 			$plugin->__destruct();
 		}
-		echo "... loaded! \n";
+		echo " loaded! \n";
 	}
 	
 	public function unload ($name)

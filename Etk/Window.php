@@ -1,124 +1,62 @@
 <?php
 
-require_once('Etk/SignalHandler.php');
+//require_once('Etk/SignalHandler.php');
 
-abstract class EtkWindow extends EtkObject
+abstract class EtkWindow
 {
-    protected $signal_handler = null;
-    public $glade = null;
-    protected $glade_mode = false;
-    protected $glade_file = '';
-    protected $accel_group = null;
+    protected $signal_handler;
+    protected $glade;
+    protected $accel_group;
+    protected $window;
 
-    public function __construct (EtkApplication $application)
+    public function __construct ($gladefile = '', $widgetname = '')
     {
-        $this->application = $application;
+    	if ($gladefile != '' && !file_exists($gladefile))
+    	{
+    		throw new EtkException('Glade file not found.');
+		}
+		
+		if ($gladefile != '')
+		{
+    		$this->glade = new GladeXML($gladefile);
+        	$this->window = $this->glade->get_widget($widgetname);
+        	
+        	if (!$this->window instanceof GtkWindow)
+        	{
+        		throw new EtkException('The window was not found.');
+			}
+		}
+		
         $this->accel_group = new GtkAccelGroup();
     }
 
-    public static function new_raw (EtkApplication $application, $title = 'EtkWindow',
-        $position = Etk::WIN_POS_CENTER, $type = Etk::WINDOW_TOPLEVEL)
+    public function set_window (GtkWindow $window)
     {
-        $etkw = new self($application);
-        $etkw->create_raw($title, $position, $type);
-        return $etkw;
+        $this->window = $window;
     }
 
-    public static function new_from_glade (EtkApplication $application, $gladefile, $widgetname)
-    {
-        $etkw = new self($application);
-        $etkw->create_from_glade($gladefile, $widgetname);
-        return $etkw;
-    }
-
-    public static function new_from_buffer (EtkApplication $application, $buffer, $widgetname)
-    {
-        $etkw = new self($application);
-        $etkw->create_from_buffer($buffer, $widgetname);
-        return $etkw;
-    }
-
-    public function create_raw ($title = 'EtkWindow', $position = Etk::WIN_POS_CENTER,
-        $type = Etk::WINDOW_TOPLEVEL)
-    {
-        $this->window = new GtkWindow($type);
-        $this->window->set_title($title);
-        $this->window->set_position($position);
-        $this->window->add_accel_group($this->accel_group);
-    }
-
-    public function create_from_glade ($gladefile, $widgetname)
-    {
-        if (!class_exists('GladeXML'))
-        {
-            Etk::FatalError(__CLASS__, 'Glade extension is not loaded.');
-        }
-
-        $this->glade = new GladeXML($gladefile);//, $widgetname);
-        $this->window = $this->glade->get_widget($widgetname);
-
-        if (!$this->window instanceof GtkWindow)
-        {
-            Etk::Warn(__CLASS__, 'Window not found.');
-        }
-        $this->glade_mode = true;
-        $this->glade_file = $gladefile;
-        $this->window->add_accel_group($this->accel_group);
-    }
-
-    public function create_from_buffer ($gladebuffer, $widgetname)
-    {
-        if (!class_exists('GladeXML'))
-        {
-            Etk::FatalError(__CLASS__, 'Glade extension is not loaded.');
-        }
-        $this->glade = GladeXML::new_from_buffer($gladebuffer);
-        $this->window = $this->glade->get_widget($widgetname);
-
-        if (!$this->window instanceof GtkWindow)
-        {
-            Etk::Error(__CLASS__, 'Window not found.');
-        }
-        $this->glade_mode = true;
-        $this->window->add_accel_group($this->accel_group);
-    }
-
-    public function set_signal_handler (EtkSignalHandler $handler)
-    {
-        $this->signal_handler = $handler;
-    }
-
-    public function auto_signal_handler ($classname)
-    {
-        if (class_exists($classname.'Signals'))
-        {
-            $classname .= 'Signals';
-            $this->signal_handler = new $classname($this->application, $this);
-        }
-    }
-
-    public function auto_connect ()
-    {
-        if (!$this->signal_handler instanceof EtkSignalHandler)
-        {
-            Etk::FatalError(__CLASS__, 'Signal handler not set.');
-        }
-
-        if (!$this->glade_mode)
-        {
-            Etk::Warn(__CLASS__, 'Auto signal connection is not implemented for non-glade mode yet.');
-            return;
-        }
-
-        $this->glade->signal_autoconnect_instance($this->signal_handler);
-    }
+	public function connect_glade_to ($class)
+	{
+		$this->signal_handler = $class;
+		
+		if ($class === null)
+		{
+			throw new EtkException('Cannot assign signal handler: null given.');
+		}
+		
+		$this->glade->signal_autoconnect_instance($class);
+	}
+	
+	public function connect_glade ()
+	{
+		$this->glade->signal_autoconnect_instance($this);
+	}
 
     public function widget ($widgetname)
     {
-        if (!$this->glade_mode)
+        if (!$this->glade instanceof GladeXML)
         {
-            Etk::Trace(__CLASS__, 'Widget access for raw window mode is not implemented yet.');
-            return;
+        	throw new EtkException('Cannot find the widget: this window is not glade-based.');
         }
 
         $widget = $this->glade->get_widget($widgetname);
@@ -128,7 +66,7 @@ abstract class EtkWindow extends EtkObject
             return $widget;
         }
 
-        Etk::Error(__CLASS__, 'Widget "'.$widgetname.'" not found.');
+        throw new Exception('Cannot find the widget.');
     }
     
     public function get_accel_group ()
@@ -145,8 +83,17 @@ abstract class EtkWindow extends EtkObject
     {
         if (!method_exists($this, $method) && $this->window instanceof GtkWindow)
         {
+        	if (!method_exists($this->window, $method))
+        	{
+        		throw new EtkException('The method '.$method.' does not exists.');
+			}
             return call_user_func_array(array($this->window, $method), $params);
         }
         //return call_user_func_array(array($this, $method), $params);
     }
+    
+    public function get_window ()
+    {
+    	return $this->window;
+	}
 }

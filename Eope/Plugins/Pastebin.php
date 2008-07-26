@@ -14,11 +14,10 @@ class PastebinPlugin extends Plugin
 		return array('main_window_create', 'activate_widgets');
 	}
 	
-	public function on_main_window_create ($window)
+	public function on_main_window_create ()
 	{
-		
-		//$window = $args[0];
-		$this->window = $window;
+		$app = Etk::get_app();
+
 		$git = GtkIconTheme::get_default();
         $icon = $git->load_icon('gtk-paste', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
 		
@@ -26,13 +25,15 @@ class PastebinPlugin extends Plugin
         $this->menu->set_image(GtkImage::new_from_pixbuf($icon));
         $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
         
-        $accel = $window->get_accel_group();
+        $accel = $app->get_accel_group();
 		$this->menu->add_accelerator('activate', $accel, ord('p'),
 			Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+		
+		$this->menu->set_sensitive(false);
 	
-		$window->widget('tools_menu_menu')->add($this->menu);
-		$window->widget('tools_menu_menu')->reorder_child($this->menu, 0);
-		$window->widget('tools_menu_menu')->show_all();
+		Etk::get_app()->widget('tools_menu_menu')->add($this->menu);
+		Etk::get_app()->widget('tools_menu_menu')->reorder_child($this->menu, 0);
+		Etk::get_app()->widget('tools_menu_menu')->show_all();
 	}
 	
 	public function on_activate_widgets ($active)
@@ -42,7 +43,7 @@ class PastebinPlugin extends Plugin
 	
 	public function _on_menu_activate ()
 	{
-		$document = $this->window->document_manager->get_document();
+		$document = Etk::get_app()->document_manager->get_document();
 		
 		if ($document === false)
 		{
@@ -93,7 +94,7 @@ class PastebinPlugin extends Plugin
 		}
 		
 		$dialog = new GtkMessageDialog (
-			$this->window->get_window(),
+			Etk::get_app()->get_window(),
 			Gtk::DIALOG_MODAL, 
 			$type,
 			Gtk::BUTTONS_OK,

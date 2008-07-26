@@ -93,18 +93,37 @@ class DirectoryViewPlugin extends Plugin
             return;
         }
 
-        $this->window->document_manager->open_document($model->get_value($iter, 2));
+        Etk::get_app()->document_manager->open_document($model->get_value($iter, 2));
     }
     
 	public function _on_menu_activate ()
 	{
-		$selected_dir = FileDialogs::open_dir($this->window);
+		$selected_dir = EtkDialog::open_dir();
         if (isset($selected_dir) && is_dir ($selected_dir))
         {
             $this->load_dir($selected_dir);
         }
-        $this->window->refresh();
+        Etk::get_app()->refresh();
 	}
+	
+	public function on_btn_tree_refresh_clicked ()
+    {
+    	$app = Etk::get_app();
+    	
+        $this->treeview->set_cursor_on_cell(array(0));
+
+        $selection = $app->widget('treeview')->get_selection();
+
+        list($model, $iter) = $selection->get_selected();
+
+        if (!$model instanceof GtkTreeStore || !$iter instanceof GtkTreeIter)
+        {
+            return;
+        }
+
+        $this->load_dir($model->get_value($iter, 2));
+
+    }
 	
 	public static function get_cwd ()
 	{
@@ -160,27 +179,27 @@ class DirectoryViewPlugin extends Plugin
         }
 	}
 	
-	public function on_main_window_create (MainWindow $window)
+	public function on_main_window_create ()
 	{
 		//$window = $args[0];
-
-		$window->sidepanel_manager->add_panel($this->vbox,'Directory view');
-		$window->sidepanel_manager->show_all();
+		$app = Etk::get_app();
 		
-		$accel = $window->get_accel_group();
+		$app->sidepanel_manager->add_panel($this->vbox,'Directory view');
+		$app->sidepanel_manager->show_all();
+		
+		$accel = Etk::get_app()->get_accel_group();
 		$this->menu->add_accelerator('activate', $accel, ord('o'),
 			Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
         
 		
-		$window->widget('file_menu_menu')->add($this->menu);
-		$window->widget('file_menu_menu')->reorder_child($this->menu, 2);
+		Etk::get_app()->widget('file_menu_menu')->add($this->menu);
+		Etk::get_app()->widget('file_menu_menu')->reorder_child($this->menu, 2);
 		//$this->glade->get_widget('window')->remove($this->glade->get_widget('vbox5'));
-		$window->widget('file_menu_menu')->show_all();
-		$this->window = $window;
+		Etk::get_app()->widget('file_menu_menu')->show_all();
 	}
 	
 	public function __destruct ()
 	{
-		$this->window->sidepanel_manager->remove_panel($this->vbox);
+		Etk::get_app()->sidepanel_manager->remove_panel($this->vbox);
 	}
 }

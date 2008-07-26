@@ -1,6 +1,6 @@
 <?php
 
-class ConfigManager extends EtkObject
+class ConfigManager
 {
 	const SEPARATOR = '.';
 	
@@ -42,7 +42,7 @@ class ConfigManager extends EtkObject
 	
 	protected function __construct ()
 	{
-		$this->set_name('ConfigManager');
+		
 	}
 	
 	public static function get_instance ()
@@ -59,10 +59,10 @@ class ConfigManager extends EtkObject
 		return $this->_get($config, self::$config);
 	}
 	
-	public function set($config, $val)
+	public function set ($config, $val)
 	{
 		$this->modified = true;
-		Etk::Trace(__CLASS__, "Changing $config to $val");
+		echo "[ConfigManager] Setting $config to ".substr($val, 0, 15)."...\n";
 		return $this->_set($config, $val, self::$config);
 	}
 	
@@ -78,12 +78,10 @@ class ConfigManager extends EtkObject
 	
 	public function load ()
 	{
-		$userdir = EtkOS::get_profile();
-
-		if (file_exists($userdir . '/.eope/eope.conf'))
+		if (file_exists(HOME_DIR . '/.eope/eope.conf'))
 		{
-			Etk::Trace(__CLASS__, 'Loading configuration from '.$userdir . '/.eope/eope.conf');
-			$this->load_from_file($userdir . '/.eope/eope.conf', true);
+			echo "Loading configuration from " . HOME_DIR . ".eope/eope.conf\n";
+			$this->load_from_file(HOME_DIR . '/.eope/eope.conf', true);
 		}
 	}
 	
@@ -91,22 +89,21 @@ class ConfigManager extends EtkObject
 	{
 		if (!$this->modified)
 		{
-			Etk::Error(__CLASS__, 'The configuration has not changed.');
-			return;
-		}
-		$userdir = EtkOS::get_profile();
-
-		if (!file_exists($userdir))
-		{
-			Etk::Error(__CLASS__, 'Cannot find user directory. The configuration will cannot be stored.');
+			echo 'The configuration has not changed.';
 			return;
 		}
 		
-		if (!is_dir($userdir . '/.eope'))
+		if (!file_exists(HOME_DIR))
 		{
-			mkdir($userdir .'/.eope');
+			throw new EtkException('Cannot find user directory. The configuration will cannot be stored.');
 		}
-		$path = $userdir .'/.eope/';
+		
+		if (!is_dir(HOME_DIR . '/.eope'))
+		{
+			mkdir(HOME_DIR .'/.eope');
+		}
+		
+		$path = HOME_DIR .'/.eope/';
 		$fp = fopen($path . 'eope.conf', 'w');
 		
 		if (!(bool)$fp)
@@ -141,7 +138,7 @@ class ConfigManager extends EtkObject
 			}
 		}
 		
-		Etk::Trace(__CLASS__, 'Storing the configuration in '.$path.'eope.conf');
+		echo "[ConfigManager] Storing the configuration in $path eope.conf\n";
 		fwrite($fp, $out);
 		fclose($fp);
 	}

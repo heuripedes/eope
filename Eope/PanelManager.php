@@ -4,11 +4,9 @@ class PanelManager extends GtkNotebook
 {
 	protected $panels = array();
 	
-	public function __construct (Eope $application, MainWindow $window)
+	public function __construct ()
     {
         parent::__construct();
-        $this->application = $application;
-        $this->mainwindow = $window;
 	}
 	
 	protected function update ()

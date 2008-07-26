@@ -5,17 +5,12 @@ require_once('Document.php');
 class DocumentManager extends GtkNotebook
 {
     protected $documents = array();
-    protected $mainwindow = null;
-    protected $application = null;
-    protected $config = null;
     protected $untitled_count = 0;
     protected $close_icon = null;
 
-    public function __construct (Eope $application, MainWindow $window)
+    public function __construct ()
     {
         parent::__construct();
-        $this->application = $application;
-        $this->mainwindow = $window;
 
         $this->connect_after('switch-page', array($this, 'on_change_tab'));
 
@@ -27,6 +22,7 @@ class DocumentManager extends GtkNotebook
 
     public function on_change_tab ()
     {
+    	$app = Etk::get_app();
     	$document = $this->get_document();
     	
     	if ($document === false)
@@ -43,13 +39,13 @@ class DocumentManager extends GtkNotebook
         
     	$this->update_status();
     	
-    	$this->mainwindow->widget('menu_edit_undo')->set_sensitive($docbuffer->can_undo());
-    	$this->mainwindow->widget('menu_edit_redo')->set_sensitive($docbuffer->can_redo());
+    	Etk::get_app()->widget('menu_edit_undo')->set_sensitive($docbuffer->can_undo());
+    	Etk::get_app()->widget('menu_edit_redo')->set_sensitive($docbuffer->can_redo());
 		
     	$lang = $document->get_language_name();
     	
-    	$index = $this->application->get_lang_index($lang);
-        $this->mainwindow->widget('lang_combo')->set_active($index);
+    	$index = $app->get_lang_index($lang);
+        $app->widget('lang_combo')->set_active($index);
         
     }
     
@@ -64,21 +60,14 @@ class DocumentManager extends GtkNotebook
 		
     	$pos = $document->get_cursor_pos();
     	
-    	$this->mainwindow->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
-    	$this->mainwindow->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
+    	Etk::get_app()->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
+    	Etk::get_app()->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
     	
     	$title = $document->get_title() . ($document->get_modified() ? '*' : '');
-    	$this->mainwindow->set_title($title);
+    	Etk::get_app()->set_title($title);
     	$child = $this->get_nth_page($this->get_current_page());
 		$this->set_tab_label_text($child, $title);
 		
-		//echo "\n-Filename: ".$document->get_filename()." Title: $title";
-		
-	}
-    public function on_document_change ()
-    {
-    	//$this->update_status();
-    	//$this->on_change_tab();
 	}
 
     public function close_document ($index = -1)
@@ -98,8 +87,8 @@ class DocumentManager extends GtkNotebook
         
         if (!$this->get_n_pages())
         {
-        	$this->mainwindow->activate_widgets();
-        	$this->mainwindow->set_title('Eope');
+        	Etk::get_app()->activate_widgets();
+        	Etk::get_app()->set_title('Eope');
 		}
     }
     
@@ -131,7 +120,7 @@ class DocumentManager extends GtkNotebook
     	
     	if ($filename == '' || $index === true)
     	{
-    		$filename = FileDialogs::save_as($this->mainwindow);
+    		$filename = EtkDialog::save_as();
     		
     		if ($filename === false)
     		{
@@ -169,11 +158,13 @@ class DocumentManager extends GtkNotebook
      */
     public function open_document ($filename = null)
     {
+    	$app = Etk::get_app();
+    	
         $document = new Document();
         
         if ($filename === true)
         {
-        	$filename = FileDialogs::open_file($this->mainwindow);
+        	$filename = EtkDialog::open_file();
         	
         	if ($filename === false)
         	{
@@ -206,16 +197,13 @@ class DocumentManager extends GtkNotebook
         
         $document->set_title($title);
 		
-		//echo "\nFilename: $filename, Title: $title";
-		
         $swindow = new GtkScrolledWindow ();
         $swindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         $swindow->add($document);
-        
 
         $page = $this->append_page($swindow, new GtkLabel($title));
         
-        $this->mainwindow->activate_widgets(true); 
+        Etk::get_app()->activate_widgets(true); 
 
         $ext = explode('.', $filename);
         
@@ -257,7 +245,6 @@ class DocumentManager extends GtkNotebook
             
 		$this->show_all();
 
-		//$this->set_tab_reorderable($swindow, true);
         $this->set_current_page($page);
         
         $document->grab_focus();
@@ -265,14 +252,11 @@ class DocumentManager extends GtkNotebook
         $document->connect_simple('move-cursor', array($this, 'update_status'));
 		$document->get_buffer()->connect_simple('changed', array($this, 'update_status'));
 		
-		$this->mainwindow->set_title($title);
+		$app->set_title($title);
 		
-    	$index = $this->application->get_lang_index($language);
-		$this->mainwindow->widget('lang_combo')->set_active($index);
-		//echo "\nFilename: $filename, Title: $title";
+    	$index = $app->get_lang_index($language);
+		$app->widget('lang_combo')->set_active($index);
         $this->documents[] = $document;
-        
-        //$this->on_change_tab();
     }
 
     public function get_open_files ()
@@ -284,4 +268,17 @@ class DocumentManager extends GtkNotebook
         }
         return $files;
     }
+    
+    public function get_modified_files ()
+    {
+    	$files = array();
+        foreach ($this->documents as $document)
+        {
+        	if ($document->get_modified())
+        	{
+        		$files[] = $document->get_filename();
+			}
+        }
+        return $files;
+	}
 }

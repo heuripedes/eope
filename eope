@@ -1,3 +1,0 @@
-#/bin/bash
-php -d extension=php_gtk2.so bootstrap.php
-

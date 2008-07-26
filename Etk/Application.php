@@ -1,19 +1,12 @@
 <?php
 
-require_once('Etk/Window.php');
+require_once(ETK_DIR . 'Window.php');
 
-abstract class EtkApplication extends EtkObject
+abstract class EtkApplication extends EtkWindow
 {
-	protected $title = '';
-	protected $directory = '';
-	protected $config = null;
-	
-    public function __construct ($directory = '.')
+    public function __construct ($gladefile = '', $widgetname = '')
     {
-    	$this->directory = $directory;
-    	
-        $this->window = new MainWindow($this);        
-        
+    	parent::__construct ($gladefile, $widgetname);
     }
 
     public function run ()
@@ -24,6 +17,7 @@ abstract class EtkApplication extends EtkObject
     public function terminate ()
     {
         Gtk::main_quit();
+        exit;
     }
 	
     public function get_application ()

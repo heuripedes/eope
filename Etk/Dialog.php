@@ -1,16 +1,30 @@
 <?php
 
-class FileDialogs 
+/**
+ * Dialog.php
+ * 
+ * Class to easy create basic dialogs.
+ * 
+ * @author     Higor "enygmata" Eurípedes
+ * @copyright  Higor "enygmata" Eurípedes (c) 2008
+ * @license    http://www.opensource.org/licenses/gpl-license.php GPL 
+ */
+
+class EtkDialog 
 {
 	protected static function get_window ($window = null)
 	{
+		if ($window === null)
+		{
+			$window = Etk::get_app()->get_window();
+		}
 		if ($window instanceof EtkWindow)
 		{
 			$window = $window->get_window();
 		}
 		if (!$window instanceof GtkWindow && $window !== null)
 		{
-			Etk::Error(__CLASS__, '$window is not a instance of GtkWindow.');
+			throw new EtkException('$window is not a instance of GtkWindow.');
 		}
 		return $window;
 	}
@@ -49,8 +63,6 @@ class FileDialogs
         }
 		$filename = $dialog->get_filename();
 		
-		Etk::Trace(__CLASS__, 'Trying to open '.$filename);
-
         $dialog->destroy();
         
         return $filename;
@@ -75,5 +87,6 @@ class FileDialogs
         $dialog->destroy();
         return $dirpath;
 	}
+	
 }
 
