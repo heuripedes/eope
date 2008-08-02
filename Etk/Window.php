@@ -1,7 +1,5 @@
 <?php
 
-//require_once('Etk/SignalHandler.php');
-
 abstract class EtkWindow
 {
     protected $signal_handler;

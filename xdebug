@@ -1,5 +1,5 @@
 #!/bin/sh
 
 export XDEBUG_CONFIG="idekey=XDebugClient"
-OPTS="-d xdebug.show_exception_trace=On -d xdebug.remote_enable=On -d xdebug."
-/usr/local/bin/php $OPTS run.php $@
+OPTS="-d extension=php_gtk2.so -d xdebug.show_exception_trace=On -d xdebug.remote_enable=On -d xdebug."
+/usr/local/bin/php $OPTS run.phpw $@

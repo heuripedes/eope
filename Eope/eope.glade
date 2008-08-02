@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sat Jul 26 11:05:50 2008 -->
+<!--Generated with glade3 3.4.5 on Mon Jul 28 21:38:02 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">640</property>
@@ -30,8 +30,8 @@
                         <property name="label" translatable="yes">_New</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_file_menu_new_activate"/>
-                        <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+                        <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="menu-item-image34">
                             <property name="visible">True</property>
@@ -274,8 +274,89 @@
             <child>
               <widget class="GtkMenuItem" id="search_menu">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="label" translatable="yes">_Search</property>
                 <property name="use_underline">True</property>
+                <child>
+                  <widget class="GtkMenu" id="search_menu_menu">
+                    <property name="visible">True</property>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="search_menu_find">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">_Find</property>
+                        <property name="use_underline">True</property>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image20">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-find</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="search_menu_find_files">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Find _in files</property>
+                        <property name="use_underline">True</property>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image23">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-find</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="search_menu_replace">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">_Search and replace</property>
+                        <property name="use_underline">True</property>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image22">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-missing-image</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="menuitem1">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="search_menu_next">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Find _next</property>
+                        <property name="use_underline">True</property>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image24">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-media-previous</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="search_menu_previous">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Find _previous</property>
+                        <property name="use_underline">True</property>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image25">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-media-next</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                  </widget>
+                </child>
               </widget>
             </child>
             <child>
@@ -316,6 +397,7 @@
                           <widget class="GtkImage" id="menu-item-image19">
                             <property name="visible">True</property>
                             <property name="stock">gtk-preferences</property>
+                            <property name="icon_size">1</property>
                           </widget>
                         </child>
                       </widget>
@@ -465,25 +547,13 @@
                   <widget class="GtkHBox" id="fake_status_bar">
                     <property name="spacing">12</property>
                     <child>
-                      <widget class="GtkLabel" id="line_label">
+                      <widget class="GtkLabel" id="cursor_pos_label">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Line:	1</property>
+                        <property name="label" translatable="yes">Line:	1 Column:	1</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="padding">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="GtkLabel" id="column_label">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">Column:	1</property>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -494,7 +564,7 @@
                       </widget>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -512,7 +582,7 @@ Soft tabs (8)</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">3</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </widget>

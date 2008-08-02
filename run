@@ -1,2 +1,2 @@
 #!/bin/sh
-/usr/local/bin/php run.php $@
+/usr/local/bin/php -d extension=php_gtk2.so run.phpw $@

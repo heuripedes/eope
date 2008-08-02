@@ -43,19 +43,7 @@ class Eope extends EtkApplication
         $this->widget('editor_vbox')->pack_start($this->document_manager);
         $this->widget('editor_vbox')->show_all();
         
-        if ((bool)$config->get('files.reopen'))
-		{
-			$files = explode(':', $config->get('files.last_files'));
-			if ($files[0] != '')
-			{
-				foreach($files as $file)
-				{
-					$this->document_manager->open_document(urldecode($file));
-				}
-			}
-		}
-		
-		$this->sidepanel_manager = new PanelManager();
+        $this->sidepanel_manager = new PanelManager();
         $this->widget('side_panel')->pack_start($this->sidepanel_manager);
         $this->widget('side_panel')->show_all();
         
@@ -76,6 +64,20 @@ class Eope extends EtkApplication
 	
 	public function run ()
 	{
+		$config = ConfigManager::get_instance();
+		if ((bool)$config->get('files.reopen'))
+		{
+			$files = explode(':', $config->get('files.last_files'));
+			if ($files[0] != '')
+			{
+				foreach($files as $file)
+				{
+					echo $file."\n";
+					$this->document_manager->open_document(urldecode($file));
+				}
+			}
+		}
+		
 		PluginManager::get_instance()->load_plugins();
 		PluginManager::get_instance()->run_event('main_window_create', $this);
 		
@@ -94,6 +96,7 @@ class Eope extends EtkApplication
 		$this->widget('file_menu_save_as')->set_sensitive($active);
 		$this->widget('file_menu_close')->set_sensitive($active);
 		$this->widget('edit_menu')->set_sensitive($active);
+		$this->widget('search_menu')->set_sensitive($active);
 	}
 	
 	public function get_lang_index ($lang = 'none')
@@ -108,14 +111,14 @@ class Eope extends EtkApplication
 	
 	public function populate_lang_list ()
 	{
-		$lang_manager = new GtkSourceLanguagesManager();
-        $lang_objects = $lang_manager->get_available_languages();
+		$lm = new GtkSourceLanguagesManager();
+        $lang_objects = $lm->get_available_languages();
 
         $this->langlist = array();
         
-        foreach ($lang_objects as $obj)
+        foreach ($lang_objects as $lang)
         {
-			$this->langlist[] = $obj->get_name();
+			$this->langlist[] = $lang->get_name();
         }
         
         sort($this->langlist);
@@ -160,10 +163,6 @@ class Eope extends EtkApplication
 	
 	public function terminate ()
 	{
-
-		
-		
-		
 		$config = ConfigManager::get_instance();
 		
 		$files = array_map('urlencode', $this->document_manager->get_open_files());

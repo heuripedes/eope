@@ -1,83 +1,77 @@
 <?php
-$mimes = array (
-    'CSS' => array('css', 'text/css'),
-    'HTML' => array('html', 'text/html'),
-    'C#' => array('cs', 'text/x-csharp'),
-    'Nemerle' => array('text/x-nemerle'),
-    'Makefile' => array('makefile', 'text/x-makefile'),
-    'Java' => array('java', 'text/x-java'),
-    'D' => array('d', 'text/x-dsrc'),
-    'C' => array('c', 'text/x-csrc','text/x-chdr'),
-    'Pascal' => array('pas', 'text/x-pascal'),
-    'DocBook' => array('docbook', 'application/docbook+xml'),
-    'Texinfo' => array('text/x-texinfo'),
-    '.desktop' => array('application/x-desktop','application/x-gnome-app-info'),
-    'SQL' => array('sql', 'text/x-sql'),
-    'Perl' => array('pl', 'application/x-perl'),
-    'Ada' => array('text/x-adasrc'),
-    'Octave' => array('text/x-octave','text/x-matlab'),
-    'Haskell' => array('hs', 'text/x-haskell'),
-    'Lua' => array('lua', 'text/x-lua'),
-    'Tcl' => array('tcl', 'text/x-tcl'),
-    'JavaScript' => array('js', 'application/x-javascript'),
-    'Ruby' => array('rb', 'application/x-ruby'),
-    'LaTeX' => array('tex', 'text/x-tex'),
-    'MSIL' => array('text/x-msil'),
-    'Diff' => array('diff', 'text/x-patch'),
-    'Scheme' => array('text/x-scheme'),
-    '.ini' => array('text/x-ini-file','application/x-ini-file'),
-    'GtkRC' => array('text/x-gtkrc'),
-    'PHP' => array('php', 'application/x-php'),
-    'Python' => array('py', 'text/x-python'),
-    'Boo' => array('text/x-boo'),
-    'VB.NET' => array('text/x-vbnet','text/x-vb'),
-    'R' => array('text/x-R'),
-    'XML' => array('xml', 'application/xml','text/xml'),
-    'ChangeLog' => array('text/x-changelog'),
-    'sh' => array('sh', 'application/x-shellscript'),
-    'C++' => array('text/x-c++src','text/x-c++hdr'),
-    'IDL' => array('text/x-idl'),
-    'VHDL' => array('vhd', 'text/x-vhdl'),
-    'RPM spec' => array('text/x-rpm-spec'),
-    'Fortran 95' => array('text/x-fortran')
-);
 
-$lang = array (
-		'asm' => 'asm',
-		'c' => 'c',
-        'h'=> 'c',
-		'ml' => 'caml',
-		'conf' => 'conf',
-		'cpp' => 'cpp',
-		'cs' => 'cs',
-		'css' => 'css',
-		'd' => 'd',
-		'diff' => 'diff',
-		'docbook' => 'docbook',
-		'fe' => 'ferite',
-		'f' => 'fortran',
-		'bas' => 'freebasic',
-		'hs' => 'haskell',
-		'hx' => 'haxe',
-		'html' => 'html',
-		'java' => 'java',
-		'js' => 'javascript',
-		'tex' => 'latex',
-		'lua' => 'lua',
-		'makefile'=>'makefile',
-		'mak' => 'makefile',
-		'oms' => 'oms',
-		'pas' => 'pascal',
-		'pl' => 'perl',
-		'php' => 'php',
-		'py' => 'python',
-		'rst' => 'restructuredtext',
-		'rb' => 'ruby',
-		'sh' => 'sh',
-		'sql' => 'sql',
-		'tcl' => 'tcl',
-		'vhd' => 'vhdl',
-		'xml' => 'xml',
-		'txt' => 'none',
-		'readme' => 'none'
-    );
+function get_mime_by_ext ($ext, $mimeno = 0)
+{
+	$mimes = array(
+		'css' => array('text/css'),
+		'html' => array('text/html'),
+		'htm' => array('text/html'),
+		//'nemerle' => array('text/x-nemerle'),
+		'cs' => array('text/x-csharp'),
+		'makefile' => array('text/x-makefile'),
+		'po' => array('text/x-gettext-translation', 'text/x-gettext-translation-template'),
+		'java' => array('text/x-java'),
+		//'verilog' => array('text/x-verilog-src'),
+		'd' => array('text/x-dsrc'),
+		'c' => array('text/x-csrc', 'text/x-chdr'),
+		'h' => array('text/x-csrc', 'text/x-chdr'),
+		'pas' => array('text/x-pascal'),
+		'docbook' => array('application/docbook+xml'),
+		//'objective caml' => array('text/x-ocaml'),
+		//'texinfo' => array('text/x-texinfo'),
+		'sql' => array('text/x-sql'),
+		'.desktop' => array('application/x-desktop', 'application/x-gnome-app-info'),
+		'pl' => array('application/x-perl'),
+		'ada' => array('text/x-adasrc'),
+		//'octave' => array('text/x-octave', 'text/x-matlab'),
+		//'haskell' => array('text/x-haskell'),
+		'lua' => array('text/x-lua'),
+		'tcl' => array('text/x-tcl'),
+		'js' => array('application/x-javascript'),
+		'rb' => array('application/x-ruby'),
+		'tex' => array('text/x-tex'),
+		//'msil' => array('text/x-msil'),
+		'scheme' => array('text/x-scheme'),
+		'dif' => array('text/x-patch'),
+		'diff' => array('text/x-patch'),
+		'patch' => array('text/x-patch'),
+		'.ini' => array('text/x-ini-file', 'application/x-ini-file'),
+		'.conf' => array('text/x-ini-file', 'application/x-ini-file'),
+		'gtkrc' => array('text/x-gtkrc'),
+		'php' => array('application/x-php'),
+		'php4' => array('application/x-php'),
+		'phpw' => array('application/x-php'),
+		'py' => array('text/x-python'),
+		//'vb.net' => array('text/x-vbnet', 'text/x-vb'),
+		'r' => array('text/x-r'),
+		//'boo' => array('text/x-boo'),
+		'xml' => array('application/xml', 'text/xml'),
+		'xsl' => array('application/xml', 'text/xml'),
+		'sh' => array('application/x-shellscript'),
+		'changelog' => array('text/x-changelog'),
+		//'idl' => array('text/x-idl'),
+		'cxx' => array('text/x-c++src', 'text/x-c++hdr'),
+		'hxx' => array('text/x-c++src', 'text/x-c++hdr'),
+		'vhdl' => array('text/x-vhdl'),
+		//'especificação de rpm' => array('text/x-rpm-spec'),
+		'old' => array('text/x-fortran'),
+		'f77' => array('text/x-fortran'),
+		'f99' => array('text/x-fortran')
+	);
+	
+	$ext = strtolower($ext);
+	
+	if (!isset($mimes[$ext]))
+	{
+		return 'text/plain';
+	}
+	
+	if (isset($mimes[$ext][$mimeno]))
+	{
+	 	return $mimes[$ext][$mimeno];
+	}
+	else
+	{
+		return $mimes[$ext][0];
+	}
+}

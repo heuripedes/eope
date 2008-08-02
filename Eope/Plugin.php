@@ -94,10 +94,10 @@ abstract class Plugin
 		$menu = $menu.'_menu_menu';
 		$menuw = $app->widget($menu);
 		
-		if (!$menuw instanceof GtkWidget || !$widget instanceof GtkWidget)
+		if (!$menuw instanceof GtkWidget || !$widget instanceof GtkWidget || !$widget->parent == $menuw)
 		{
-			echo "[Plugin] The menu does not exist or the widget given is not valid." .
-				"Nothing do be done.\n";
+			echo "[Plugin] The menu does not exist or the widget given is not valid. " .
+				 "Nothing do be done.\n";
 			return;
 		}
 		

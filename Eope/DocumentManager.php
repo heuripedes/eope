@@ -1,6 +1,7 @@
 <?php
 
 require_once('Document.php');
+require_once('Mimes.php');
 
 class DocumentManager extends GtkNotebook
 {
@@ -58,16 +59,28 @@ class DocumentManager extends GtkNotebook
     		return;
 		}
 		
-    	$pos = $document->get_cursor_pos();
-    	
-    	Etk::get_app()->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
-    	Etk::get_app()->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
+    	$this->update_cursor_pos();
     	
     	$title = $document->get_title() . ($document->get_modified() ? '*' : '');
     	Etk::get_app()->set_title($title);
     	$child = $this->get_nth_page($this->get_current_page());
 		$this->set_tab_label_text($child, $title);
+	}
+	
+	public function update_cursor_pos ()
+	{
+		$document = $this->get_document();
+    	
+    	if ($document === false)
+    	{
+    		return;
+		}
 		
+    	$pos = $document->get_cursor_pos();
+    	
+    	//Etk::get_app()->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
+    	//Etk::get_app()->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
+    	Etk::get_app()->widget('cursor_pos_label')->set_text("Line:\t".($pos->y+1)." Column:\t".($pos->x+1));
 	}
 
     public function close_document ($index = -1)
@@ -206,42 +219,10 @@ class DocumentManager extends GtkNotebook
         
         Etk::get_app()->activate_widgets(true); 
 
-        $ext = explode('.', $filename);
+        $ext = @end(explode('.', $filename));
         
-        switch(strtolower(end($ext)))
-        {
-        	// scripting
-        	case 'pl': $language = 'perl'; break;
-        	case 'py': $language = 'python'; break;
-        	case 'rb': $language = 'ruby'; break;
-        	case 'php': $language = 'php'; break;
-        	case 'sh': $language = 'sh'; break;
-        	case 'javascript':
-        	case 'js': $language = 'javascript'; break;
-        	
-        	// markup
-        	case 'htm': case 'xhtm': case 'xhtml':
-        	case 'html': $language = 'html'; break;
-        	case 'xml': $language = 'xml'; break;
-        	
-        	// style
-        	case 'css': $language = 'css'; break;
-        	
-        	// other
-        	case 'ini': $language = '.ini'; break;
-        	case 'conf': $language = '.ini'; break;
-        	case 'pas': $language = 'pascal'; break;
-        	case 'java': $language = 'java'; break;
-        	case 'cs': $language = 'c#'; break;
-        	case 'h':
-        	case 'c': $language = 'c'; break;
-        	case 'hxx':
-        	case 'cpp': $language = 'c++'; break;
-        	
-        	default: $language = 'none';
-		}
-                
-        $document->set_language_by_name($language);
+        $mime = get_mime_by_ext($ext);
+        $document->set_language_by_mime($mime);
         $document->refresh_options();
             
 		$this->show_all();
@@ -250,10 +231,12 @@ class DocumentManager extends GtkNotebook
         
         $document->grab_focus();
         
-        $document->connect_simple('move-cursor', array($this, 'update_status'));
+        $document->connect_simple('move-cursor', array($this, 'update_cursor_pos'));
 		$document->get_buffer()->connect_simple('changed', array($this, 'update_status'));
 		
 		$app->set_title($title);
+		
+		$language = $document->get_language_name_by_mime($mime);
 		
     	$index = $app->get_lang_index($language);
 		$app->widget('lang_combo')->set_active($index);

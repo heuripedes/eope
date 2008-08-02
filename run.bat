@@ -1,2 +1,3 @@
 @echo off
-php-win.exe -f run.php
+php-win.exe -f run.phpw
+

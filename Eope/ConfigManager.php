@@ -16,7 +16,7 @@ class ConfigManager
 			'font' => 'monospace medium 9',
 			'auto_indent' => true,
 			'tab_style' => 4,
-			'highlight_line' => false,
+			'highlight_line' => true,
 			'match_brackets' => true, 
 			'smart_keys' => true,
 			'word_wrap' => true,

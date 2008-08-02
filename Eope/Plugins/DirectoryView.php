@@ -167,7 +167,7 @@ class DirectoryViewPlugin extends Plugin
         $git = GtkIconTheme::get_default();
 
         $this->icons['folder'] = $git->load_icon('gtk-directory', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-        $this->icons['menu'] = $git->load_icon('gtk-open', 13.5, Gtk::ICON_LOOKUP_USE_BUILTIN);
+        $this->icons['menu'] = $git->load_icon('gtk-open', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
         $this->icons['folder_open'] = $git->load_icon('gtk-open', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
         $this->icons['file'] = $git->load_icon('gtk-file', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);
         $this->icons['refresh'] = $git->load_icon('gtk-file', 16, Gtk::ICON_LOOKUP_USE_BUILTIN);

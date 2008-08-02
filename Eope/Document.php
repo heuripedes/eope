@@ -169,12 +169,24 @@ class Document extends GtkSourceView
     		return;
 		}
         $langmngr = new GtkSourceLanguagesManager();
-        $lang = $langmngr->get_language_from_mime_type($mimes);
+        $lang = $langmngr->get_language_from_mime_type($mimetype);
 
         $this->buffer->set_language($lang);
-		$this->buffer->set_highlight(true);
+        $this->buffer->set_highlight(true);
+		//$this->buffer->set_property('highlight_syntax', true);
         //$this->lang_name = $lang->get_name();
     }
+    
+    public function get_language_name_by_mime ($mime)
+    {
+    	if ($mime == 'text/plain')
+    	{
+    		return 'None';
+		}
+        $langmngr = new GtkSourceLanguagesManager();
+        $lang = $langmngr->get_language_from_mime_type($mime);
+        return $lang->get_name();
+	}
 
     public function set_language_by_name ($language = 'none')
     {
@@ -245,6 +257,7 @@ class Document extends GtkSourceView
 			$this->set_wrap_mode(GTK::WRAP_WORD);
 		}
 
+		$this->set_highlight_current_line((bool)$conf->get('editor.highlight_line'));
         $this->set_show_line_numbers((bool)$conf->get('editor.line_numbers'));
 		$this->set_show_line_markers((bool)$conf->get('editor.line_markers'));
 		$this->set_auto_indent((bool)$conf->get('editor.auto_indent'));
