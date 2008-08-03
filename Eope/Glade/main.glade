@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Mon Jul 28 21:38:02 2008 -->
+<!--Generated with glade3 3.4.5 on Sat Aug  2 22:44:36 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">640</property>
@@ -375,7 +375,7 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="menu_tools_preferences">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Edit preferences</property>
+                        <property name="label" translatable="yes">Preferences</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menu_tools_preferences_activate"/>
                         <child internal-child="image">

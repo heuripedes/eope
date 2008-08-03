@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Document.php
+ * 
+ * EOPE - Enygmata Own PHP Editor
+ * 
+ * @author     Higor "enygmata" Eurípedes
+ * @copyright  Higor "enygmata" Eurípedes (c) 2008
+ * @license    http://www.opensource.org/licenses/gpl-license.php GPL 
+ */
+
 class Document extends GtkSourceView
 {
     protected $tab = -1;
@@ -38,14 +48,14 @@ class Document extends GtkSourceView
     
     public function undo ()
     {
-    	if ($this->buffer->can_undo())
-    	{
-        	$this->buffer->undo();
-		}
-		else
-		{
-			$this->set_modified(false);
-		}
+        if ($this->buffer->can_undo())
+        {
+            $this->buffer->undo();
+        }
+        else
+        {
+            $this->set_modified(false);
+        }
     }
 
     public function redo ()
@@ -55,38 +65,38 @@ class Document extends GtkSourceView
     
     public function paste ()
     {
-    	$this->buffer->paste_clipboard(new GtkClipboard(), null, True);
-	}
-	
-	public function cut ()
-	{
-		$this->buffer->cut_clipboard(new GtkClipboard(), true);
-	}
-	
-	public function copy ()
-	{
-		$this->buffer->copy_clipboard(new GtkClipboard());
-	}
+        $this->buffer->paste_clipboard(new GtkClipboard(), null, True);
+    }
+    
+    public function cut ()
+    {
+        $this->buffer->cut_clipboard(new GtkClipboard(), true);
+    }
+    
+    public function copy ()
+    {
+        $this->buffer->copy_clipboard(new GtkClipboard());
+    }
 
     public function get_text ($hidden = true)
     {
         return $this->buffer->get_text($this->buffer->get_start_iter(),
-        		$this->buffer->get_end_iter(), $hidden);
+                $this->buffer->get_end_iter(), $hidden);
     }
 
     public function set_text ($text, $undoable = false)
     {
-    	if ($undoable === true)
-    	{
-    		$this->buffer->begin_not_undoable_action();
-		}
-		
+        if ($undoable === true)
+        {
+            $this->buffer->begin_not_undoable_action();
+        }
+        
         $this->buffer->set_text($text);
         
         if ($undoable === true)
-    	{
-    		$this->buffer->end_not_undoable_action();
-		}
+        {
+            $this->buffer->end_not_undoable_action();
+        }
     }
 
     public function set_filename ($filename)
@@ -96,25 +106,25 @@ class Document extends GtkSourceView
     
     public function set_title ($title)
     {
-    	$this->title = $title;
-	}
-	
-	public function get_title ()
-	{
-		return $this->title;
-	}
+        $this->title = $title;
+    }
+    
+    public function get_title ()
+    {
+        return $this->title;
+    }
     
     public function get_filename()
     {
-    	return $this->filename;
-	}
+        return $this->filename;
+    }
 
     public function get_cursor_pos ()
     {
         if (!$this->buffer instanceof GtkSourceBuffer)
         {
-        	return;
-		}
+            return;
+        }
         $cursor_mark = $this->buffer->get_insert();
         $cursor_iter = $this->buffer->get_iter_at_mark($cursor_mark);
         $line = $cursor_iter->get_line();
@@ -135,58 +145,58 @@ class Document extends GtkSourceView
                 $column++;
             }
         }
-		$pos = new GdkRectangle($column,$line,0,0);
+        $pos = new GdkRectangle($column,$line,0,0);
 
         return $pos;
     }
 
-	public function get_language_name ()
-	{
-		$lang = $this->buffer->get_language();
-		if ($lang instanceof GtkSourceLanguage)
-		{
-			return $lang->get_name();
-		}
-		return 'None';
-	}
-	
-	public function get_language_mime ()
-	{
-		$lang = $this->buffer->get_language();
-		if ($lang instanceof GtkSourceLanguage)
-		{
-			$mimes = $lang->get_mime_types();
-			return $mimes[0];
-		}
-		return 'text/plain';
-	}
-	
+    public function get_language_name ()
+    {
+        $lang = $this->buffer->get_language();
+        if ($lang instanceof GtkSourceLanguage)
+        {
+            return $lang->get_name();
+        }
+        return 'None';
+    }
+    
+    public function get_language_mime ()
+    {
+        $lang = $this->buffer->get_language();
+        if ($lang instanceof GtkSourceLanguage)
+        {
+            $mimes = $lang->get_mime_types();
+            return $mimes[0];
+        }
+        return 'text/plain';
+    }
+    
     public function set_language_by_mime ($mimetype)
     {
-    	$this->buffer->set_language(null);
-    	if ($mimetype == 'text/plain')
-    	{
-    		return;
-		}
+        $this->buffer->set_language(null);
+        if ($mimetype == 'text/plain')
+        {
+            return;
+        }
         $langmngr = new GtkSourceLanguagesManager();
         $lang = $langmngr->get_language_from_mime_type($mimetype);
 
         $this->buffer->set_language($lang);
         $this->buffer->set_highlight(true);
-		//$this->buffer->set_property('highlight_syntax', true);
+        //$this->buffer->set_property('highlight_syntax', true);
         //$this->lang_name = $lang->get_name();
     }
     
     public function get_language_name_by_mime ($mime)
     {
-    	if ($mime == 'text/plain')
-    	{
-    		return 'None';
-		}
+        if ($mime == 'text/plain')
+        {
+            return 'None';
+        }
         $langmngr = new GtkSourceLanguagesManager();
         $lang = $langmngr->get_language_from_mime_type($mime);
         return $lang->get_name();
-	}
+    }
 
     public function set_language_by_name ($language = 'none')
     {
@@ -204,9 +214,9 @@ class Document extends GtkSourceView
         {
             if (strtolower($lang->get_name()) == $language)
             {
-            	print_r($lang->get_mime_types());
+                print_r($lang->get_mime_types());
                 $this->buffer->set_language($lang);
-		        $this->buffer->set_highlight(true);
+                $this->buffer->set_highlight(true);
                 return;
             }
         }
@@ -214,56 +224,56 @@ class Document extends GtkSourceView
 
     public function load ()
     {
-		if (file_exists($this->filename) && is_readable($this->filename) && is_file($this->filename))
-		{
-			$text = file_get_contents($this->filename);
-			$this->set_text($text, true);
-			$this->set_modified(false);
-			
-			return true;
-		}
-		return false;
+        if (file_exists($this->filename) && is_readable($this->filename) && is_file($this->filename))
+        {
+            $text = file_get_contents($this->filename);
+            $this->set_text($text, true);
+            $this->set_modified(false);
+            
+            return true;
+        }
+        return false;
     }
     
     public function save ($filename = null)
     {
-    	if ($filename == null)
-    	{
-    		$filename = $this->filename;
-		}
-    	if ($filename !=  '')
-    	{
-    		return file_put_contents($filename, $this->get_text());
-		}
-		return false;
-	}
-	
-	public function get_options ()
-	{
-		return $this->options;
-	}
-	
+        if ($filename == null)
+        {
+            $filename = $this->filename;
+        }
+        if ($filename !=  '')
+        {
+            return file_put_contents($filename, $this->get_text());
+        }
+        return false;
+    }
+    
+    public function get_options ()
+    {
+        return $this->options;
+    }
+    
     public function refresh_options ()
     {
-    	$modified = $this->get_modified();
-    	$conf = ConfigManager::get_instance();
-    	$n = $conf->get('editor.tab_style') ;
-    	$width = array(2, 3, 4, 8);
+        $modified = $this->get_modified();
+        $conf = ConfigManager::get_instance();
+        $n = $conf->get('editor.tab_style') ;
+        $width = array(2, 3, 4, 8);
         $this->set_tabs_width(($n > 3 ? $width[$n-4] : $width[$n]));
         $this->set_insert_spaces_instead_of_tabs($conf->get('editor.tab_style') > 3);
-				
-		if ($conf->get('editor.word_wrap') == true)
-		{
-			$this->set_wrap_mode(GTK::WRAP_WORD);
-		}
+                
+        if ($conf->get('editor.word_wrap') == true)
+        {
+            $this->set_wrap_mode(GTK::WRAP_WORD);
+        }
 
-		$this->set_highlight_current_line((bool)$conf->get('editor.highlight_line'));
+        $this->set_highlight_current_line((bool)$conf->get('editor.highlight_line'));
         $this->set_show_line_numbers((bool)$conf->get('editor.line_numbers'));
-		$this->set_show_line_markers((bool)$conf->get('editor.line_markers'));
-		$this->set_auto_indent((bool)$conf->get('editor.auto_indent'));
-		
-		$this->set_smart_home_end((bool)$conf->get('editor.smart_keys'));
-		$this->modify_font(new PangoFontDescription($conf->get('editor.font')));
+        $this->set_show_line_markers((bool)$conf->get('editor.line_markers'));
+        $this->set_auto_indent((bool)$conf->get('editor.auto_indent'));
+        
+        $this->set_smart_home_end((bool)$conf->get('editor.smart_keys'));
+        $this->modify_font(new PangoFontDescription($conf->get('editor.font')));
         
         $this->set_cursor_visible(true);
         

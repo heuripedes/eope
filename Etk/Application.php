@@ -6,7 +6,7 @@ abstract class EtkApplication extends EtkWindow
 {
     public function __construct ($gladefile = '', $widgetname = '')
     {
-    	parent::__construct ($gladefile, $widgetname);
+        parent::__construct ($gladefile, $widgetname);
     }
 
     public function run ()
@@ -18,7 +18,7 @@ abstract class EtkApplication extends EtkWindow
     {
         Gtk::main_quit();
     }
-	
+    
     public function get_application ()
     {
         return $this;
