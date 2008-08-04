@@ -47,36 +47,25 @@ class DocumentManager extends GtkNotebook
             return;
         }
         
-        $this->update_status();
+        $this->check_document_status();
+        $this->on_move_cursor();
         
-        Etk::get_app()->widget('menu_edit_undo')->set_sensitive($docbuffer->can_undo());
-        Etk::get_app()->widget('menu_edit_redo')->set_sensitive($docbuffer->can_redo());
+        $app->widget('menu_edit_undo')->set_sensitive($docbuffer->can_undo());
+        $app->widget('menu_edit_redo')->set_sensitive($docbuffer->can_redo());
         
         $lang = $document->get_language_name();
         
         $index = $app->get_lang_index($lang);
         $app->widget('lang_combo')->set_active($index);
-        
     }
     
-    public function update_status ()
+    public function on_document_change ()
     {
-        $document = $this->get_document();
-        
-        if ($document === false)
-        {
-            return;
-        }
-        
-        $this->update_cursor_pos();
-        
-        $title = $document->get_title() . ($document->get_modified() ? '*' : '');
-        Etk::get_app()->set_title($title);
-        $child = $this->get_nth_page($this->get_current_page());
-        $this->set_tab_label_text($child, $title);
+        $this->check_document_status();
+        $this->on_move_cursor();
     }
     
-    public function update_cursor_pos ()
+    public function on_move_cursor ()
     {
         $document = $this->get_document();
         
@@ -87,9 +76,31 @@ class DocumentManager extends GtkNotebook
         
         $pos = $document->get_cursor_pos();
         
-        //Etk::get_app()->widget('line_label')->set_text("Line:\t" . ($pos->y+1));
-        //Etk::get_app()->widget('column_label')->set_text("Column:\t" . ($pos->x+1));
         Etk::get_app()->widget('cursor_pos_label')->set_text("Line:\t".($pos->y+1)." Column:\t".($pos->x+1));
+    }
+    
+    public function check_document_status ()
+    {
+        $document = $this->get_document();
+        
+        if ($document === false)
+        {
+            return;
+        }
+        
+        $title = $document->get_title();
+        
+        if ($document->get_modified())
+        {
+            $title .= '*';
+        }
+        
+        if (Etk::get_app()->get_title() != $title)
+        {
+            Etk::get_app()->set_title($title);
+            $child = $this->get_nth_page($this->get_current_page());
+            $this->set_tab_label_text($child, $title);
+        }
     }
 
     public function close_document ($index = -1)
@@ -240,8 +251,8 @@ class DocumentManager extends GtkNotebook
         
         $document->grab_focus();
         
-        $document->connect_simple('move-cursor', array($this, 'update_cursor_pos'));
-        $document->get_buffer()->connect_simple('changed', array($this, 'update_status'));
+        $document->connect_simple('move-cursor', array($this, 'on_move_cursor'));
+        $document->connect_buffer_signal('changed', array($this, 'on_document_change'));
         
         $app->set_title($title);
         

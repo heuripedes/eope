@@ -23,15 +23,18 @@ class ConfigManager
             'height' => 480
             ),
         'editor' => array(
-            'font' => 'monospace medium 9',
-            'auto_indent' => true,
-            'tab_style' => 4,
+            'font' => 'Monospace 10',
+            'autoindent' => true,
+            'tab_style' => 6,
             'highlight_line' => true,
             'match_brackets' => true, 
             'smart_keys' => true,
             'word_wrap' => true,
             'line_numbers' => true,
-            'line_markers' => true
+            'line_markers' => true,
+            'margin'=>true,
+            'line_end' => 0, //0:unix,1:windows,2:mac
+            'autodetect_le' => true
             ),
         'files' => array(
             'reopen' => false,

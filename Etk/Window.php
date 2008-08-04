@@ -27,6 +27,11 @@ abstract class EtkWindow
         
         $this->accel_group = new GtkAccelGroup();
     }
+    
+    public function __destruct ()
+    {
+        $this->window->destroy();
+    }
 
     public function set_window (GtkWindow $window)
     {

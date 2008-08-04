@@ -79,7 +79,7 @@ class EopeSignals
     
     public function on_menu_tools_plugins_activate ()
     {
-        new PluginList();
+        new PluginPrefs();
     }
     
 // view menu {

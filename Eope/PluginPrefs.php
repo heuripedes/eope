@@ -19,7 +19,7 @@ class PluginPrefs extends EtkWindow
     public function __construct ()
     {
         parent::__construct(APP_DIR . 'Glade/pluginwindow.glade','window');
-        $this->connect_glade_to(new PluginListSignals($this));
+        $this->connect_glade_to(new PluginPrefsSignals($this));
         
         $treeview = $this->widget('treeview');
         

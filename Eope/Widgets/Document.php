@@ -46,6 +46,11 @@ class Document extends GtkSourceView
         $this->buffer->set_modified($modified);
     }
     
+    public function connect_buffer_signal ($event, $function, $param=array())
+    {
+        $this->buffer->connect($event, $function, $param);
+    }
+    
     public function undo ()
     {
         if ($this->buffer->can_undo())
@@ -266,7 +271,7 @@ class Document extends GtkSourceView
         {
             $this->set_wrap_mode(GTK::WRAP_WORD);
         }
-
+        $this->set_show_margin((bool)$conf->get('editor.margin'));
         $this->set_highlight_current_line((bool)$conf->get('editor.highlight_line'));
         $this->set_show_line_numbers((bool)$conf->get('editor.line_numbers'));
         $this->set_show_line_markers((bool)$conf->get('editor.line_markers'));
