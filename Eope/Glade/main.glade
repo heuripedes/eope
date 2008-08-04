@@ -594,7 +594,7 @@ Soft tabs (8)</property>
                 </child>
                 <child>
                   <widget class="GtkHBox" id="search_bar">
-                    <property name="visible">True</property>
+                    <property name="visible">False</property>
                     <property name="border_width">2</property>
                     <property name="spacing">6</property>
                     <child>

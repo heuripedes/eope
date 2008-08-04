@@ -1,3 +1,4 @@
+
 @echo off
-php-win.exe -f run.phpw
+..\php-gtk\php.exe -f run.phpw
 
