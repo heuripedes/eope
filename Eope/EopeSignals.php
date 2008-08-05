@@ -96,33 +96,6 @@ class EopeSignals
 // file menu {
     public function on_file_menu_close_activate ()
     {
-        $app = Etk::get_app();
-        $doc = $app->document_manager->get_document();
-        
-        if (!$doc instanceof Document)
-        {
-            return;
-        }
-        
-        if ($doc->get_modified())
-        {
-            $win = new GtkMessageDialog($app->get_window(),
-                Gtk::DIALOG_MODAL,
-                Gtk::MESSAGE_QUESTION,
-                Gtk::BUTTONS_YES_NO,
-                'This file has been modified, dont you wish to save it before close it?'
-                );
-            $win->set_title('Confirmation');
-            $win->show_all();
-            
-            if ($win->run() == Gtk::RESPONSE_YES)
-            {
-                $app->document_manager->save_document();
-            }
-            
-            $win->destroy();
-        }
-        
         Etk::get_app()->document_manager->close_document();
     }
 

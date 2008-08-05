@@ -130,18 +130,28 @@ class Document extends GtkSourceView
         {
             return;
         }
+        
         $cursor_mark = $this->buffer->get_insert();
         $cursor_iter = $this->buffer->get_iter_at_mark($cursor_mark);
         $line = $cursor_iter->get_line();
 
         $start_iter = $this->buffer->get_iter_at_line($line);
-        $line_text = $this->buffer->get_text($start_iter, $cursor_iter);
+        
+        try {
+            $line_text = $this->buffer->get_text($start_iter, $cursor_iter);
+        }
+        catch (Exception $e)
+        {
+            echo '['.basename($this->filename).'] ' . $e->getMessage()."\n";
+            return;
+        }
+        
         $tabs_width = $this->get_tabs_width();
         $column = 0;
 
         for ($i = 0; $i < strlen($line_text); $i++)
         {
-            if ($line_text[$i] == "\n")
+            if ($line_text[$i] == "\t")
             {
                 $column += ($tabs_width - ($column % $tabs_width));
             }
@@ -164,7 +174,7 @@ class Document extends GtkSourceView
         }
         return 'None';
     }
-    
+
     public function get_language_mime ()
     {
         $lang = $this->buffer->get_language();
@@ -175,7 +185,7 @@ class Document extends GtkSourceView
         }
         return 'text/plain';
     }
-    
+
     public function set_language_by_mime ($mimetype)
     {
         $this->buffer->set_language(null);
@@ -188,8 +198,6 @@ class Document extends GtkSourceView
 
         $this->buffer->set_language($lang);
         $this->buffer->set_highlight(true);
-        //$this->buffer->set_property('highlight_syntax', true);
-        //$this->lang_name = $lang->get_name();
     }
     
     public function get_language_name_by_mime ($mime)
@@ -219,7 +227,6 @@ class Document extends GtkSourceView
         {
             if (strtolower($lang->get_name()) == $language)
             {
-                print_r($lang->get_mime_types());
                 $this->buffer->set_language($lang);
                 $this->buffer->set_highlight(true);
                 return;
@@ -275,7 +282,7 @@ class Document extends GtkSourceView
         $this->set_highlight_current_line((bool)$conf->get('editor.highlight_line'));
         $this->set_show_line_numbers((bool)$conf->get('editor.line_numbers'));
         $this->set_show_line_markers((bool)$conf->get('editor.line_markers'));
-        $this->set_auto_indent((bool)$conf->get('editor.auto_indent'));
+        $this->set_auto_indent((bool)$conf->get('editor.autoindent'));
         
         $this->set_smart_home_end((bool)$conf->get('editor.smart_keys'));
         $this->modify_font(new PangoFontDescription($conf->get('editor.font')));

@@ -1,7 +1,5 @@
 TODO:
 
 - CODE
-finish directory view plugin
 finish menu signals
-- FEATURES
-multiple sessions
+add bracket/quote completing

@@ -103,20 +103,44 @@ class DocumentManager extends GtkNotebook
         }
     }
 
-    public function close_document ($index = -1)
+    public function close_document ($page = -1)
     {
-        if ($index == -1)
+        
+        if ($page < 0)
         {
             $page = $this->get_current_page();
-
-            if ($page < 0)
-            {
-                return;
-            }
         }
+        
+        if (!isset($this->documents[$page]))
+        {
+            return;
+        }
+        
+        $app = Etk::get_app();
+        $doc = $this->documents[$page];
+        
+        if ($doc->get_modified())
+        {
+            $win = new GtkMessageDialog($app->get_window(),
+                Gtk::DIALOG_MODAL,
+                Gtk::MESSAGE_QUESTION,
+                Gtk::BUTTONS_YES_NO,
+                'Do you wish to save this file before close?'
+                );
+            $win->set_title('File modified');
+            $win->show_all();
+            
+            if ($win->run() == Gtk::RESPONSE_YES)
+            {
+                $app->document_manager->save_document();
+            }
+            
+            $win->destroy();
+        }
+        
         unset($this->documents[$page]);
         $this->remove_page($page);
-        sort($this->documents);
+        $this->documents = array_values($this->documents);
         
         if (!$this->get_n_pages())
         {
@@ -284,5 +308,13 @@ class DocumentManager extends GtkNotebook
             }
         }
         return $files;
+    }
+    
+    public function refresh_all_options ()
+    {
+        foreach ($this->documents as $doc)
+        {
+            $doc->refresh_options();
+        }
     }
 }
