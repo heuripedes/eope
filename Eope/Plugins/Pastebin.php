@@ -16,16 +16,15 @@ class PastebinPlugin extends PluginAbstract
         $this->menu->set_image(GtkImage::new_from_pixbuf($icon));
         $this->menu->connect_simple('activate', array($this, '_on_menu_activate'));
         
-        //($menu, $widget, $position, $accelmask = null, $key = null)
         $this->add_to_menu('tools', $this->menu, 0, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, 'p');
         
         $this->menu->set_sensitive(false);
     }
     
-    public function __destruct ()
+    public function on_unload ()
     {
         $this->remove_from_menu('tools', $this->menu);
-    }
+    }    
     
     public function get_handled_events ()
     {

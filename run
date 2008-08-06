@@ -1,3 +1,3 @@
 #!/bin/sh
-/usr/local/bin/php -d extension=php_gtk2.so run.phpw $@
+`type php | cut -d' ' -f 3` -d extension=php_gtk2.so run.phpw $@
 

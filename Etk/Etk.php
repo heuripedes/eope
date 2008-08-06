@@ -79,7 +79,7 @@ class Etk
 {
     protected static $app;
     
-    protected function __construct ()
+    private function __construct ()
     {
     }
     
@@ -94,7 +94,7 @@ class Etk
         self::$app = $application;
     }
     
-    public static function run ($application)
+    public static function run ($application, $params = array())
     {
         if (!defined('ETK_DIR'))
         {
@@ -106,7 +106,7 @@ class Etk
             throw new EtkException ('APP_DIR is not defined, cannot continue.');
         }
         require_once(APP_DIR . $application . '.php');
-        self::set_app(new $application());
+        self::set_app(new $application($params));
         self::get_app()->run();
     }
 }
@@ -114,8 +114,10 @@ class Etk
 
 class EtkException extends Exception
 {
-    public function __construct ($message)
+    public function __construct ()
     {
+        $args = func_get_args();
+        $message = call_user_func_array('sprintf', $args);
         parent::__construct("[EtkException] $message\n");
         return;
     }

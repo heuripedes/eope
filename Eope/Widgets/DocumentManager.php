@@ -50,8 +50,8 @@ class DocumentManager extends GtkNotebook
         $this->check_document_status();
         $this->on_move_cursor();
         
-        $app->widget('menu_edit_undo')->set_sensitive($docbuffer->can_undo());
-        $app->widget('menu_edit_redo')->set_sensitive($docbuffer->can_redo());
+        $app->widget('edit_menu_undo')->set_sensitive($docbuffer->can_undo());
+        $app->widget('edit_menu_redo')->set_sensitive($docbuffer->can_redo());
         
         $lang = $document->get_language_name();
         

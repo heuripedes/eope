@@ -239,6 +239,7 @@ class Document extends GtkSourceView
         if (file_exists($this->filename) && is_readable($this->filename) && is_file($this->filename))
         {
             $text = file_get_contents($this->filename);
+            //echo iconv('UTF-8', 'ASCII//TRANSLIT', $text);
             $this->set_text($text, true);
             $this->set_modified(false);
             

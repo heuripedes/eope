@@ -67,7 +67,7 @@ class EopeSignals
 
 // tools menu
     
-    public function on_menu_tools_preferences_activate ()
+    public function on_tools_menu_preferences_activate ()
     {
         /*if (file_exists(HOME_DIR . '/.eope/eope.conf'))
         {
@@ -77,7 +77,7 @@ class EopeSignals
         new Preferences();
     }
     
-    public function on_menu_tools_plugins_activate ()
+    public function on_tools_menu_plugins_activate ()
     {
         new PluginPrefs();
     }
@@ -120,17 +120,17 @@ class EopeSignals
     }
 
 // edit menu
-    public function on_menu_edit_undo_activate ()
+    public function on_edit_menu_undo_activate ()
     {
         Etk::get_app()->document_manager->get_document()->undo();
     }
     
-    public function on_menu_edit_redo_activate ()
+    public function on_edit_menu_redo_activate ()
     {
         Etk::get_app()->document_manager->get_document()->redo();
     }
     
-    public function on_menu_edit_paste_activate ()
+    public function on_edit_menu_paste_activate ()
     {
         $document = Etk::get_app()->document_manager->get_document();
         if ($document instanceof Document)
@@ -139,7 +139,7 @@ class EopeSignals
         }
     }
     
-    public function on_menu_edit_cut_activate ()
+    public function on_edit_menu_cut_activate ()
     {
         $document = Etk::get_app()->document_manager->get_document();
         if ($document instanceof Document)
@@ -148,12 +148,17 @@ class EopeSignals
         }
     }
     
-    public function on_menu_edit_copy_activate ()
+    public function on_edit_menu_copy_activate ()
     {
         $document = Etk::get_app()->document_manager->get_document();
         if ($document instanceof Document)
         {
             $document->copy();
         }        
+    }
+
+    public function on_search_menu_find_activate ()
+    {
+        $app = Etk::get_app();
     }
 }

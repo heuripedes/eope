@@ -27,7 +27,7 @@ class DirectoryViewPlugin extends PluginAbstract
         $this->add_to_menu('file', $this->menu, 2, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, '0');
     }
     
-    public function __destruct ()
+    public function on_unload ()
     {
         $this->remove_from_panel('side', $this->vbox);
         $this->remove_from_menu('file', $this->menu);

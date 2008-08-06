@@ -35,11 +35,13 @@ class Eope extends EtkApplication
     public $document_manager = null;
     public $sidepanel_manager = null;
     public $bottompanel_manager = null;
+    public $argv = array();
     
-    public function __construct ()
+    public function __construct ($argv)
     {
         parent::__construct(APP_DIR . 'Glade/main.glade', 'main_window');
         
+        $this->argv = $argv;
         
         $config = ConfigManager::get_instance();
         $config->load();
@@ -63,15 +65,19 @@ class Eope extends EtkApplication
         $this->resize((int)$config->get('ui.width'), (int)$config->get('ui.height'));
         
         $this->widget('side_panel')->set_visible((bool)$config->get('side_panel.visible'));
-           $this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
-           
-           $this->populate_lang_list();
+        $this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
+        
+        $this->connect_simple('delete-event', array($this, 'hide_on_delete'));
+        $this->populate_lang_list();
         $this->activate_widgets();
     }
     
     public function run ()
     {
         $config = ConfigManager::get_instance();
+        
+        $argv = array_slice($this->argv, 1);
+        
         if ((bool)$config->get('files.reopen'))
         {
             $files = explode(':', $config->get('files.last_files'));
@@ -83,6 +89,11 @@ class Eope extends EtkApplication
                     $this->document_manager->open_document(urldecode($file));
                 }
             }
+        }
+        
+        foreach ($argv as $arg)
+        {
+            $this->document_manager->open_document($arg);
         }
         
         PluginManager::get_instance()->load_plugins();
