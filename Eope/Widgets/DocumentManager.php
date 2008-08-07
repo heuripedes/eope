@@ -75,8 +75,10 @@ class DocumentManager extends GtkNotebook
         }
         
         $pos = $document->get_cursor_pos();
-        
-        Etk::get_app()->widget('cursor_pos_label')->set_text("Line:\t".($pos->y+1)." Column:\t".($pos->x+1));
+        if (is_object($pos))
+        {
+            Etk::get_app()->widget('cursor_pos_label')->set_text("Line:\t".($pos->y+1)." Column:\t".($pos->x+1));
+        }        
     }
     
     public function check_document_status ()
@@ -101,6 +103,8 @@ class DocumentManager extends GtkNotebook
             $child = $this->get_nth_page($this->get_current_page());
             $this->set_tab_label_text($child, $title);
         }
+        
+        //Etk::get_app()->widget('encoding_label')->set_text(strtoupper($document->get_encoding()));
     }
 
     public function close_document ($page = -1)
@@ -172,7 +176,14 @@ class DocumentManager extends GtkNotebook
     
     public function save_document ($index = -1)
     {
-        $document = $this->get_document($index);
+    
+        $document = $this->get_document($index === true ? -1 : $index);
+        
+        if (!$document instanceof Document)
+        {
+            return false;
+        }
+        
         $filename = trim($document->get_filename());
         
         if ($filename == '' || $index === true)
@@ -181,27 +192,29 @@ class DocumentManager extends GtkNotebook
             
             if ($filename === false)
             {
-                return;
+                return false;
             }
             if ($document->save($filename) !== false)
             {
-                $child = $this->get_nth_page($index);
-                $document->set_filename($filename);
                 $document->set_title(basename($filename));
-                //$this->set_tab_label_text($child, $document->get_title());
-                $this->on_change_tab();
                 $document->get_buffer()->set_modified(false);
+                $this->on_change_tab();
+                return true;
             }
-            return;
+            return false;
         }
 
         if ($document->save())
         {
-            $child = $this->get_nth_page($index);
+            //$child = $this->get_nth_page($index);
             $document->set_title(basename($filename));
-            $this->set_tab_label_text($child, $document->get_title());
+            //$this->set_tab_label_text($child, $document->get_title());
             $document->get_buffer()->set_modified(false);
+            $this->on_change_tab();
+            return true;
         }
+        
+        return false;
     }
     
 

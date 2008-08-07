@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Aug  5 21:49:17 2008 -->
+<!--Generated with glade3 3.4.5 on Wed Aug  6 20:58:31 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">640</property>
@@ -102,6 +102,7 @@
                         <property name="sensitive">False</property>
                         <property name="label" translatable="yes">Save _as...</property>
                         <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_file_menu_save_as_activate"/>
                         <accelerator key="S" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK" signal="activate"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="menu-item-image39">
@@ -553,7 +554,7 @@
                     <child>
                       <widget class="GtkLabel" id="cursor_pos_label">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Line:	1 Column:	1</property>
+                        <property name="label" translatable="yes">Line:	1	Column:	1</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
@@ -587,6 +588,16 @@ Soft tabs (8)</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="encoding_combo">
+                        <property name="visible">True</property>
+                        <property name="items" translatable="yes"></property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </widget>

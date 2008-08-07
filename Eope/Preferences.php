@@ -33,5 +33,23 @@ class Preferences extends EtkWindow
         
         $this->widget('pref_highlight_line')->set_active($cm->get('editor.highlight_line'));
         $this->widget('pref_match_brackets')->set_active($cm->get('editor.match_brackets'));
+        
+        $model = new GtkListStore(GObject::TYPE_STRING);
+        $this->widget('pref_def_encoding')->set_model($model);
+        
+        if (function_exists('mb_list_encodings'))
+        {
+            $encs = mb_list_encodings();
+            foreach ($encs as $enc)
+            {
+                $model->append(array($enc));
+            }
+        }
+        else
+        {
+            $model->append(array(ini_get('php-gtk.codepage')));
+        }
+
+        $this->widget('pref_def_encoding')->show_all();
     }
 }

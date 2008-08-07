@@ -7,6 +7,7 @@ class DirectoryViewPlugin extends PluginAbstract
     protected $vbox = null;
     protected $swindow = null;
     protected $menu = null;
+    protected $label = null;
     
     protected $window = null;
     
@@ -24,7 +25,7 @@ class DirectoryViewPlugin extends PluginAbstract
         $app = Etk::get_app();
         
         $this->add_to_panel('side', $this->vbox, 'Directory view');
-        $this->add_to_menu('file', $this->menu, 2, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, '0');
+        $this->add_to_menu('file', $this->menu, 2, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, 'O');
     }
     
     public function on_unload ()
@@ -62,6 +63,8 @@ class DirectoryViewPlugin extends PluginAbstract
         $selected_dir = EtkDialog::open_dir();
         if (isset($selected_dir) && is_dir ($selected_dir))
         {
+            $this->swindow->set_visible(true);
+            $this->label->set_visible(false);
             $this->load_dir($selected_dir);
         }
         Etk::get_app()->refresh();
@@ -181,12 +184,19 @@ class DirectoryViewPlugin extends PluginAbstract
         $this->store = new GtkTreeStore(GObject::TYPE_OBJECT, GObject::TYPE_STRING, GObject::TYPE_STRING);
         $this->treeview->set_model($this->store);
         
+        $this->label = new GtkLabel("Choose a directory\nusing Ctrl+Shift+O");
+        $this->label->modify_font(new PangoFontDescription('bold'));
         $this->vbox = new GtkVBox();
         
         $this->swindow = new GtkScrolledWindow ();
         $this->swindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         $this->swindow->add($this->treeview);
         $this->vbox->pack_start($this->swindow);
+        $this->vbox->pack_start($this->label, true, true);
+        
+        $this->swindow->set_visible(false);
+        $this->label->set_visible(true);
+    
         
         $this->menu = new GtkImageMenuItem('Open directory');
         $this->menu->set_image(GtkImage::new_from_pixbuf($this->icons['menu']));

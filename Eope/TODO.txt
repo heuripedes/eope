@@ -2,4 +2,6 @@ TODO:
 
 - CODE
 finish menu signals
+
+- FEATURES
 add bracket/quote completing

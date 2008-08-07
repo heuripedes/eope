@@ -114,6 +114,11 @@ class EopeSignals
         Etk::get_app()->document_manager->save_document();
     }
     
+    public function on_file_menu_save_as_activate ()
+    {
+        Etk::get_app()->document_manager->save_document(true);
+    }
+    
     public function on_file_menu_save_all_activate ()
     {
         Etk::get_app()->document_manager->save_all();

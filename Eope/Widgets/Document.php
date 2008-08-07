@@ -119,6 +119,21 @@ class Document extends GtkSourceView
         return $this->title;
     }
     
+    public function get_encoding ()
+    {
+        return $this->encoding;
+    }
+    
+    public function set_encoding ($encoding = null)
+    {
+        if ($encoding === null)
+        {
+            return;
+        }
+        $this->encoding = $encoding;
+        $this->set_modified(true);
+    }
+    
     public function get_filename()
     {
         return $this->filename;
@@ -138,12 +153,12 @@ class Document extends GtkSourceView
         $start_iter = $this->buffer->get_iter_at_line($line);
         
         try {
-            $line_text = $this->buffer->get_text($start_iter, $cursor_iter);
+            $line_text = @$this->buffer->get_text($start_iter, $cursor_iter);
         }
         catch (Exception $e)
         {
             echo '['.basename($this->filename).'] ' . $e->getMessage()."\n";
-            return;
+            return false;
         }
         
         $tabs_width = $this->get_tabs_width();
@@ -240,6 +255,13 @@ class Document extends GtkSourceView
         {
             $text = file_get_contents($this->filename);
             //echo iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+            
+            if (function_exists('mb_detect_encoding'))
+            {
+                $this->encoding = mb_detect_encoding($text);
+                $text = mb_convert_encoding($text, ini_get('php-gtk.codepage'), $this->encoding);
+            }
+            
             $this->set_text($text, true);
             $this->set_modified(false);
             
@@ -256,7 +278,12 @@ class Document extends GtkSourceView
         }
         if ($filename !=  '')
         {
-            return file_put_contents($filename, $this->get_text());
+            $text = $this->get_text();
+            if (function_exists('mb_detect_encoding'))
+            {
+                $text = mb_convert_encoding($text, $this->encoding, ini_get('php-gtk.codepage'));
+            }
+            return file_put_contents($filename, $text);
         }
         return false;
     }

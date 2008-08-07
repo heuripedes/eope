@@ -5,8 +5,8 @@
  * 
  * EOPE - Enygmata Own PHP Editor
  * 
- * @author     Higor "enygmata" Eurípedes
- * @copyright  Higor "enygmata" Eurípedes (c) 2008
+ * @author     Higor "enygmata" Eurpedes
+ * @copyright  Higor "enygmata" Eurpedes (c) 2008
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL 
  */
 
@@ -69,7 +69,9 @@ class Eope extends EtkApplication
         
         $this->connect_simple('delete-event', array($this, 'hide_on_delete'));
         $this->populate_lang_list();
+        $this->populate_encoding_list();
         $this->activate_widgets();
+        
     }
     
     public function run ()
@@ -95,6 +97,7 @@ class Eope extends EtkApplication
         {
             $this->document_manager->open_document($arg);
         }
+        
         
         PluginManager::get_instance()->load_plugins();
         PluginManager::get_instance()->run_event('main_window_create', $this);
@@ -129,6 +132,9 @@ class Eope extends EtkApplication
     
     public function populate_lang_list ()
     {
+        $model = new GtkListStore(GObject::TYPE_STRING);
+        $this->widget('lang_combo')->set_model($model);
+        
         $lm = new GtkSourceLanguagesManager();
         $lang_objects = $lm->get_available_languages();
 
@@ -145,11 +151,33 @@ class Eope extends EtkApplication
         
         foreach ($this->langlist as $lang)
         {
-             $this->widget('lang_combo')->append_text($lang);
+             $model->append(array($lang));
         }
         
         $this->widget('lang_combo')->set_active(count($this->langlist) -1);
+        $this->widget('lang_combo')->show_all();
         $this->langlist = array_map('strtolower', $this->langlist);
+    }
+    
+    public function populate_encoding_list ()
+    {
+        $model = new GtkListStore(GObject::TYPE_STRING);
+        $this->widget('encoding_combo')->set_model($model);
+        
+        if (function_exists('mb_list_encodings'))
+        {
+            $encs = mb_list_encodings();
+            foreach ($encs as $enc)
+            {
+                $model->append(array($enc));
+            }
+        }
+        else
+        {
+            $model->append(array(ini_get('php-gtk.codepage')));
+        }
+        $this->widget('encoding_combo')->set_active(0);
+        $this->widget('encoding_combo')->show_all();
     }
     
     public function on_client_quit ()
