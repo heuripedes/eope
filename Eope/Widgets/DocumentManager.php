@@ -83,6 +83,7 @@ class DocumentManager extends GtkNotebook
     
     public function check_document_status ()
     {
+        $app = Etk::get_app();
         $document = $this->get_document();
         
         if ($document === false)
@@ -97,13 +98,19 @@ class DocumentManager extends GtkNotebook
             $title .= '*';
         }
         
-        if (Etk::get_app()->get_title() != $title)
+        if ($app->get_title() != $title)
         {
-            Etk::get_app()->set_title($title);
+            $app->set_title($title);
             $child = $this->get_nth_page($this->get_current_page());
             $this->set_tab_label_text($child, $title);
         }
         
+        
+        if (HAS_MBSTRING && $document->get_encoding() != $app->widget('encoding_combo')->get_active_text())
+        {
+            $i = array_search($document->get_encoding(), $app->valid_encodings);
+            $app->widget('encoding_combo')->set_active($i);
+        }
         //Etk::get_app()->widget('encoding_label')->set_text(strtoupper($document->get_encoding()));
     }
 
@@ -298,6 +305,8 @@ class DocumentManager extends GtkNotebook
         $index = $app->get_lang_index($language);
         $app->widget('lang_combo')->set_active($index);
         $this->documents[] = $document;
+        
+        $this->check_document_status();
     }
 
     public function get_open_files ()

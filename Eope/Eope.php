@@ -5,8 +5,8 @@
  * 
  * EOPE - Enygmata Own PHP Editor
  * 
- * @author     Higor "enygmata" Eurpedes
- * @copyright  Higor "enygmata" Eurpedes (c) 2008
+ * @author     Higor "enygmata" Eurípedes
+ * @copyright  Higor "enygmata" Eurípedes (c) 2008
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL 
  */
 
@@ -37,12 +37,27 @@ class Eope extends EtkApplication
     public $bottompanel_manager = null;
     public $argv = array();
     
+    private $firstrun; 
+    
+    public $valid_encodings = array(
+        'UCS-4','UCS-4BE','UCS-4LE','UCS-2','UCS-2BE',
+        'UCS-2LE','UTF-32','UTF-32BE','UTF-32LE','UTF-16','UTF-16BE',
+        'UTF-16LE','UTF-8','UTF-7','UTF7-IMAP','ASCII','EUC-JP','SJIS',
+        'EUCJP-WIN','SJIS-WIN','CP51932','JIS','ISO-2022-JP','ISO-2022-JP-MS',
+        'WINDOWS-1252','ISO-8859-1','ISO-8859-2','ISO-8859-3','ISO-8859-4',
+        'ISO-8859-5','ISO-8859-6','ISO-8859-7','ISO-8859-8','ISO-8859-9',
+        'ISO-8859-10','ISO-8859-13','ISO-8859-14','ISO-8859-15','ISO-8859-16',
+        'EUC-CN','CP936','HZ','EUC-TW','BIG-5','EUC-KR','UHC','ISO-2022-KR',
+        'WINDOWS-1251','CP866','KOI8-R','ARMSCII-8'
+    );
+    
     public function __construct ($argv)
     {
         parent::__construct(APP_DIR . 'Glade/main.glade', 'main_window');
         
         $this->argv = $argv;
-        
+        $this->firstrun = !file_exists(HOME_DIR . '.eope/eope.conf');
+
         $config = ConfigManager::get_instance();
         $config->load();
         
@@ -67,9 +82,8 @@ class Eope extends EtkApplication
         $this->widget('side_panel')->set_visible((bool)$config->get('side_panel.visible'));
         $this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
         
-        $this->connect_simple('delete-event', array($this, 'hide_on_delete'));
-        $this->populate_lang_list();
-        $this->populate_encoding_list();
+        //$this->connect_simple('delete-event', array($this, 'hide_on_delete'));
+        $this->populate_lists();
         $this->activate_widgets();
         
     }
@@ -79,6 +93,11 @@ class Eope extends EtkApplication
         $config = ConfigManager::get_instance();
         
         $argv = array_slice($this->argv, 1);
+        
+        if ($this->firstrun)
+        {
+            $this->document_manager->open_document(APP_DIR . 'Welcome.txt');
+        }
         
         if ((bool)$config->get('files.reopen'))
         {
@@ -130,7 +149,7 @@ class Eope extends EtkApplication
         return array_search($lang, $this->langlist);
     }
     
-    public function populate_lang_list ()
+    public function populate_lists ()
     {
         $model = new GtkListStore(GObject::TYPE_STRING);
         $this->widget('lang_combo')->set_model($model);
@@ -157,42 +176,41 @@ class Eope extends EtkApplication
         $this->widget('lang_combo')->set_active(count($this->langlist) -1);
         $this->widget('lang_combo')->show_all();
         $this->langlist = array_map('strtolower', $this->langlist);
-    }
-    
-    public function populate_encoding_list ()
-    {
+
         $model = new GtkListStore(GObject::TYPE_STRING);
         $this->widget('encoding_combo')->set_model($model);
         
-        if (function_exists('mb_list_encodings'))
+        if (HAS_MBSTRING)
         {
             $encs = mb_list_encodings();
             foreach ($encs as $enc)
             {
-                $model->append(array($enc));
+                $enc = strtoupper($enc);
+                if (in_array($enc, $this->valid_encodings))
+                {
+                    $model->append(array($enc));
+                }
             }
         }
         else
         {
             $model->append(array(ini_get('php-gtk.codepage')));
         }
+        return;
         $this->widget('encoding_combo')->set_active(0);
         $this->widget('encoding_combo')->show_all();
     }
     
     public function on_client_quit ()
     {
-        return;
         $app = Etk::get_app();
         PluginManager::get_instance()->run_event('main_window_destroy');
         $modified = $app->document_manager->get_modified_files();
 
         if (count($modified) > 0)
         {
-            $win = new GtkMessageDialog($app->get_window(),
-                Gtk::DIALOG_MODAL,
-                Gtk::MESSAGE_QUESTION,
-                Gtk::BUTTONS_YES_NO,
+            $win = new GtkMessageDialog($app->get_window(), Gtk::DIALOG_MODAL,
+                Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO,
                 'Do you wish to save the modified files before leave Eope?'
                 );
             $win->set_title('Confirmation');

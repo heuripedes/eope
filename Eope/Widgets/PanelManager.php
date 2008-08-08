@@ -36,10 +36,10 @@ class PanelManager extends GtkNotebook
         {
             $label = 'Page '.count($this->panels);
         }
-        //echo "[PanelManager] Adding $label\n";
+        
         $this->update();
         $page = $this->append_page($child, new GtkLabel($label));
-        $this->show_all();
+        $this->show();
         return $page;
     }
     
@@ -49,7 +49,7 @@ class PanelManager extends GtkNotebook
         {
             $index = $this->page_num($index);
         }
-        //echo "[PanelManager] Removing $index\n";
+        
         $this->remove_page($index);
         unset($this->panels[$index]);
         sort($this->panels);

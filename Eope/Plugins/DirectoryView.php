@@ -184,19 +184,25 @@ class DirectoryViewPlugin extends PluginAbstract
         $this->store = new GtkTreeStore(GObject::TYPE_OBJECT, GObject::TYPE_STRING, GObject::TYPE_STRING);
         $this->treeview->set_model($this->store);
         
-        $this->label = new GtkLabel("Choose a directory\nusing Ctrl+Shift+O");
+        $this->label = new GtkLabel("Choose a directory\npressing Ctrl+Shift+O");
         $this->label->modify_font(new PangoFontDescription('bold'));
         $this->vbox = new GtkVBox();
+        
+        //$this->vbox->set_size_request(160, -1);
         
         $this->swindow = new GtkScrolledWindow ();
         $this->swindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         $this->swindow->add($this->treeview);
+        
         $this->vbox->pack_start($this->swindow);
         $this->vbox->pack_start($this->label, true, true);
         
         $this->swindow->set_visible(false);
         $this->label->set_visible(true);
-    
+        
+        $this->swindow->set_size_request(150, -1);
+        
+        $this->vbox->show();
         
         $this->menu = new GtkImageMenuItem('Open directory');
         $this->menu->set_image(GtkImage::new_from_pixbuf($this->icons['menu']));

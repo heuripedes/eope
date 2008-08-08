@@ -1,0 +1,18 @@
+
+                Welcome to EOPE!
+ -------------------------------------------------
+ 
+   Warning: Currently EOPE has no stable version,
+   so, do not edit important files with it.
+  
+   Please, report any bugs to:
+      https://bugs.launchpad.net/eope
+  
+   Thanks for choosing EOPE!
+ 
+      This file will self destroy in 5 secs.
+             Ha! Joke! :p
+ 
+ 
+                      Higor Euripedes (enygmata)
+

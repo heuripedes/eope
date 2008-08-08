@@ -17,6 +17,9 @@ class Document extends GtkSourceView
     protected $title = '';
     protected $lang_name = '';
     protected $options = array();
+    protected $encoding = '';
+    
+    
 
     public function __construct ()
     {
@@ -24,6 +27,7 @@ class Document extends GtkSourceView
         $buffer = new GtkSourceBuffer();
         $this->set_buffer($buffer);
         $this->buffer = $this->get_buffer();
+        $this->encoding = strtoupper(ini_get('php-gtk.codepage'));
     }
 
     public function set_parent_tab ($tab)
@@ -153,7 +157,7 @@ class Document extends GtkSourceView
         $start_iter = $this->buffer->get_iter_at_line($line);
         
         try {
-            $line_text = @$this->buffer->get_text($start_iter, $cursor_iter);
+            $line_text = $this->buffer->get_text($start_iter, $cursor_iter);
         }
         catch (Exception $e)
         {
@@ -256,9 +260,10 @@ class Document extends GtkSourceView
             $text = file_get_contents($this->filename);
             //echo iconv('UTF-8', 'ASCII//TRANSLIT', $text);
             
-            if (function_exists('mb_detect_encoding'))
+            if (HAS_MBSTRING)
             {
                 $this->encoding = mb_detect_encoding($text);
+                echo "$this->encoding\n";
                 $text = mb_convert_encoding($text, ini_get('php-gtk.codepage'), $this->encoding);
             }
             
@@ -279,7 +284,7 @@ class Document extends GtkSourceView
         if ($filename !=  '')
         {
             $text = $this->get_text();
-            if (function_exists('mb_detect_encoding'))
+            if (HAS_MBSTRING)
             {
                 $text = mb_convert_encoding($text, $this->encoding, ini_get('php-gtk.codepage'));
             }

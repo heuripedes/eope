@@ -22,6 +22,11 @@ class EopeSignals
         Etk::get_app()->terminate();
     }
     
+    public function on_main_window_delete_event ()
+    {
+        Etk::get_app()->hide();
+    }
+    
     public function on_lang_combo_changed ()
     {
         $app = Etk::get_app();
@@ -35,6 +40,23 @@ class EopeSignals
         if ($document->get_language_name() != $app->widget('lang_combo')->get_active_text())
         {
             $document->set_language_by_name($app->widget('lang_combo')->get_active_text());
+        }
+    }
+    
+    public function on_encoding_combo_changed ()
+    {
+        $app = Etk::get_app();
+        $document = $app->document_manager->get_document();
+        
+        if ($document === false)
+        {
+            return;
+        }
+        
+        if (HAS_MBSTRING && $document->get_encoding() != $app->widget('encoding_combo')->get_active_text())
+        {
+            $document->set_encoding($app->widget('encoding_combo')->get_active_text());
+            $app->document_manager->check_document_status();
         }
     }
     
@@ -66,14 +88,8 @@ class EopeSignals
     }
 
 // tools menu
-    
     public function on_tools_menu_preferences_activate ()
     {
-        /*if (file_exists(HOME_DIR . '/.eope/eope.conf'))
-        {
-            echo "[EopeSignals] Loading configuration from " . HOME_DIR . ".eope/eope.conf\n";
-            Etk::get_app()->document_manager->open_document(HOME_DIR . '/.eope/eope.conf');
-        }*/
         new Preferences();
     }
     

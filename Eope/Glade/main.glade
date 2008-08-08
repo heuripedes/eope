@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Wed Aug  6 20:58:31 2008 -->
+<!--Generated with glade3 3.4.5 on Thu Aug  7 22:10:12 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
-    <property name="width_request">640</property>
+    <property name="width_request">800</property>
     <property name="height_request">480</property>
     <property name="title" translatable="yes">Eope</property>
     <property name="window_position">GTK_WIN_POS_CENTER</property>
-    <property name="default_width">640</property>
+    <property name="default_width">800</property>
     <property name="default_height">480</property>
     <property name="icon_name">gtk-edit</property>
     <signal name="hide" handler="on_main_window_hide"/>
+    <signal name="delete_event" handler="on_main_window_delete_event"/>
     <child>
       <widget class="GtkVBox" id="main_vbox">
         <property name="visible">True</property>
@@ -30,8 +31,8 @@
                         <property name="label" translatable="yes">_New</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_file_menu_new_activate"/>
-                        <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+                        <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="menu-item-image34">
                             <property name="visible">True</property>
@@ -145,7 +146,7 @@
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">_Quit</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_main_window_hide"/>
+                        <signal name="activate" handler="on_main_window_delete_event"/>
                         <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="menu-item-image41">
@@ -505,7 +506,6 @@
             <property name="can_focus">True</property>
             <child>
               <widget class="GtkVBox" id="side_panel">
-                <property name="width_request">150</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -554,7 +554,7 @@
                     <child>
                       <widget class="GtkLabel" id="cursor_pos_label">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Line:	1	Column:	1</property>
+                        <property name="label" translatable="yes">Line:    1 Column:    1</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
@@ -594,6 +594,7 @@ Soft tabs (8)</property>
                       <widget class="GtkComboBox" id="encoding_combo">
                         <property name="visible">True</property>
                         <property name="items" translatable="yes"></property>
+                        <signal name="changed" handler="on_encoding_combo_changed"/>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
