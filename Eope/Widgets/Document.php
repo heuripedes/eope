@@ -301,7 +301,7 @@ class Document extends GtkSourceView
     public function refresh_options ()
     {
         $modified = $this->get_modified();
-        $conf = ConfigManager::get_instance();
+        $conf = Etk::get_config();
         $n = $conf->get('editor.tab_style') ;
         $width = array(2, 3, 4, 8);
         $this->set_tabs_width(($n > 3 ? $width[$n-4] : $width[$n]));

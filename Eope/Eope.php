@@ -12,11 +12,11 @@
 
 require_once(ETK_DIR . 'Etk.php');
 require_once(ETK_DIR . 'Application.php');
+require_once(ETK_DIR . 'Conf.php');
 require_once(ETK_DIR . 'Dialog.php');
 
 require_once(APP_DIR . 'functions.php');
 
-require_once(APP_DIR . 'Classes/ConfigManager.php');
 require_once(APP_DIR . 'Classes/PluginManager.php');
 
 require_once(APP_DIR . 'Widgets/PanelManager.php');
@@ -25,6 +25,7 @@ require_once(APP_DIR . 'Widgets/DocumentManager.php');
 require_once(APP_DIR . 'EopeSignals.php');
 
 require_once(APP_DIR . 'PluginPrefs.php');
+require_once(APP_DIR . 'SearchDialog.php');
 require_once(APP_DIR . 'Preferences.php');
 
 
@@ -33,8 +34,8 @@ class Eope extends EtkApplication
     public $langlist = array();
     
     public $document_manager = null;
-    public $sidepanel_manager = null;
-    public $bottompanel_manager = null;
+    public $sidepanel = null;
+    public $bottompanel = null;
     public $argv = array();
     
     private $firstrun; 
@@ -51,15 +52,61 @@ class Eope extends EtkApplication
         'WINDOWS-1251','CP866','KOI8-R','ARMSCII-8'
     );
     
+    private static $default_conf = array(
+        'eope' => array(
+            'plugins' => 'DirectoryView:Pastebin'
+            ),
+        'ui' => array(
+            'width' => 640,
+            'height' => 480
+            ),
+        'editor' => array(
+            'font' => 'Monospace 10',
+            'autoindent' => true,
+            'tab_style' => 6,
+            'highlight_line' => true,
+            'match_brackets' => true, 
+            'smart_keys' => true,
+            'word_wrap' => true,
+            'line_numbers' => true,
+            'line_markers' => true,
+            'margin'=>true,
+            'line_end' => 0, //0:unix,1:windows,2:mac
+            'autodetect_le' => true
+            ),
+        'files' => array(
+            'reopen' => false,
+            'last_files' => ''
+            ),
+        
+        'sidepanel' => array(
+            'visible' => true,
+            'width' => 100
+            ),
+        'bottompanel' => array(
+            'visible' => false,
+            'height' => 100
+            )
+    );
+    
     public function __construct ($argv)
     {
-        parent::__construct(APP_DIR . 'Glade/main.glade', 'main_window');
+        parent::__construct(APP_DIR . 'Glade/main.glade', 'main_window', 'main_window');
         
         $this->argv = $argv;
         $this->firstrun = !file_exists(HOME_DIR . '.eope/eope.conf');
-
-        $config = ConfigManager::get_instance();
-        $config->load();
+        
+        if ($this->firstrun)
+        {
+            @mkdir(HOME_DIR . '.eope');
+            touch(HOME_DIR . '.eope/eope.conf');
+        }
+        
+        $this->config->merge(self::$default_conf)
+            ->merge(HOME_DIR . '.eope/eope.conf', true);
+        
+        
+        $config = $this->config;
         
         $plugin_manager = PluginManager::get_instance();
         
@@ -67,30 +114,29 @@ class Eope extends EtkApplication
         $this->widget('editor_vbox')->pack_start($this->document_manager);
         $this->widget('editor_vbox')->show_all();
         
-        $this->sidepanel_manager = new PanelManager();
-        $this->widget('side_panel')->pack_start($this->sidepanel_manager);
+        $this->sidepanel = new PanelManager();
+        $this->widget('side_panel')->pack_start($this->sidepanel);
         $this->widget('side_panel')->show_all();
         
-        $this->bottompanel_manager = new PanelManager();
-        $this->widget('bottom_panel')->pack_start($this->bottompanel_manager);
+        $this->bottompanel = new PanelManager();
+        $this->widget('bottom_panel')->pack_start($this->bottompanel);
         $this->widget('bottom_panel')->show_all();
 
         $this->widget('tab_combo')->set_active($config->get('editor.tab_style'));
         
         $this->resize((int)$config->get('ui.width'), (int)$config->get('ui.height'));
         
-        $this->widget('side_panel')->set_visible((bool)$config->get('side_panel.visible'));
-        $this->widget('bottom_panel')->set_visible((bool)$config->get('bottom_panel.visible'));
+        $this->widget('side_panel')->set_visible((bool)$config->get('sidepanel.visible'));
+        $this->widget('bottom_panel')->set_visible((bool)$config->get('bottompanel.visible'));
         
         //$this->connect_simple('delete-event', array($this, 'hide_on_delete'));
         $this->populate_lists();
         $this->activate_widgets();
-        
     }
     
     public function run ()
     {
-        $config = ConfigManager::get_instance();
+        $config = $this->config;
         
         $argv = array_slice($this->argv, 1);
         
@@ -117,19 +163,19 @@ class Eope extends EtkApplication
             $this->document_manager->open_document($arg);
         }
         
-        
         PluginManager::get_instance()->load_plugins();
-        PluginManager::get_instance()->run_event('main_window_create', $this);
+        PluginManager::get_instance()->notify('main_window_create', $this);
         
         $this->connect_glade_to(new EopeSignals());
         
         $this->refresh();
+        
         parent::run();
     }
     
     public function activate_widgets ($active = false)
     {
-        PluginManager::get_instance()->run_event('activate_widgets', $active);
+        PluginManager::get_instance()->notify('activate_widgets', $active);
         $this->widget('fake_status_bar')->set_visible($active);
         $this->widget('file_menu_save')->set_sensitive($active);
         $this->widget('file_menu_save_all')->set_sensitive($active);
@@ -196,50 +242,30 @@ class Eope extends EtkApplication
         {
             $model->append(array(ini_get('php-gtk.codepage')));
         }
-        return;
-        $this->widget('encoding_combo')->set_active(0);
-        $this->widget('encoding_combo')->show_all();
     }
     
     public function on_client_quit ()
     {
-        $app = Etk::get_app();
-        PluginManager::get_instance()->run_event('main_window_destroy');
-        $modified = $app->document_manager->get_modified_files();
-
-        if (count($modified) > 0)
-        {
-            $win = new GtkMessageDialog($app->get_window(), Gtk::DIALOG_MODAL,
-                Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO,
-                'Do you wish to save the modified files before leave Eope?'
-                );
-            $win->set_title('Confirmation');
-            $win->show_all();
-            
-            if ($win->run() == Gtk::RESPONSE_YES)
-            {
-                $app->document_manager->save_all();
-            }
-            
-            $win->destroy();
-        }
+       
     }
     
     public function terminate ()
     {
-        $config = ConfigManager::get_instance();
+        $config = $this->config;
         
         $files = array_map('urlencode', $this->document_manager->get_open_files());
         $files = implode(':', $files);
-        $config->set('files.last_files', $files);
         
         $size = $this->get_size();
-        $config->set('ui.width', $size[0]);
-        $config->set('ui.height', $size[1]);
-        $config->set('side_panel.visible', $this->sidepanel_manager->is_visible());
-        $config->set('bottom_panel.visible', $this->bottompanel_manager->is_visible());
         
-        $config->store();
+        
+        $config->set('ui.width', $size[0])
+               ->set('ui.height', $size[1])
+               ->set('side_panel.visible', $this->sidepanel->is_visible())
+               ->set('bottom_panel.visible', $this->bottompanel->is_visible())
+               ->set('files.last_files', $files)
+               // the line below must be the last one.
+               ->store(HOME_DIR . '.eope/eope.conf');
         
         $plugins = PluginManager::get_instance()->list_plugins();
         

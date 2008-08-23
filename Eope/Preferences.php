@@ -16,7 +16,7 @@ class Preferences extends EtkWindow
 {
     public function __construct ()
     {
-        $cm = ConfigManager::get_instance();
+        $cm = Etk::get_config();
         
         parent::__construct(APP_DIR . 'Glade/preferences.glade','window');
         $this->connect_glade_to(new PreferencesSignals($this));

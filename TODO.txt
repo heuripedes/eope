@@ -1,0 +1,12 @@
+TODO:
+
+wrap strings with _() for internationalization thru gettext
+implement search
+implementing replace
+finish Etk documentation
+
+- CODE
+finish menu signals
+
+- FEATURES
+add bracket/quote completing

@@ -111,12 +111,10 @@ class DocumentManager extends GtkNotebook
             $i = array_search($document->get_encoding(), $app->valid_encodings);
             $app->widget('encoding_combo')->set_active($i);
         }
-        //Etk::get_app()->widget('encoding_label')->set_text(strtoupper($document->get_encoding()));
     }
 
     public function close_document ($page = -1)
     {
-        
         if ($page < 0)
         {
             $page = $this->get_current_page();
@@ -133,10 +131,8 @@ class DocumentManager extends GtkNotebook
         if ($doc->get_modified())
         {
             $win = new GtkMessageDialog($app->get_window(),
-                Gtk::DIALOG_MODAL,
-                Gtk::MESSAGE_QUESTION,
-                Gtk::BUTTONS_YES_NO,
-                'Do you wish to save this file before close?'
+                Gtk::DIALOG_MODAL, Gtk::MESSAGE_QUESTION,
+                Gtk::BUTTONS_YES_NO, 'Do you wish to save this file before close?'
                 );
             $win->set_title('File modified');
             $win->show_all();

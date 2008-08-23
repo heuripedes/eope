@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Aug  7 22:10:12 2008 -->
+<!--Generated with glade3 3.4.5 on Sat Aug 23 00:27:20 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -10,7 +10,6 @@
     <property name="default_width">800</property>
     <property name="default_height">480</property>
     <property name="icon_name">gtk-edit</property>
-    <signal name="hide" handler="on_main_window_hide"/>
     <signal name="delete_event" handler="on_main_window_delete_event"/>
     <child>
       <widget class="GtkVBox" id="main_vbox">
@@ -28,34 +27,22 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="file_menu_new">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_New</property>
+                        <property name="label" translatable="yes">gtk-new</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_file_menu_new_activate"/>
-                        <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image34">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-new</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
+                        <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="file_menu_open">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Open file</property>
+                        <property name="label" translatable="yes">gtk-open</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_file_menu_open_activate"/>
                         <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image35">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-open</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -67,17 +54,11 @@
                       <widget class="GtkImageMenuItem" id="file_menu_save">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">_Save</property>
+                        <property name="label" translatable="yes">gtk-save</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_file_menu_save_activate"/>
                         <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image37">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-save</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -101,17 +82,11 @@
                       <widget class="GtkImageMenuItem" id="file_menu_save_as">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">Save _as...</property>
+                        <property name="label" translatable="yes">gtk-save-as</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_file_menu_save_as_activate"/>
                         <accelerator key="S" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image39">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-save-as</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -123,17 +98,11 @@
                       <widget class="GtkImageMenuItem" id="file_menu_close">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">_Close file</property>
+                        <property name="label" translatable="yes">gtk-close</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_file_menu_close_activate"/>
                         <accelerator key="W" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image40">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-paste</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -144,17 +113,11 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="file_menu_quit">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Quit</property>
+                        <property name="label" translatable="yes">gtk-quit</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_main_window_delete_event"/>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_file_menu_quit_activate"/>
                         <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image41">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-quit</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                   </widget>
@@ -174,34 +137,22 @@
                       <widget class="GtkImageMenuItem" id="edit_menu_undo">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">_Undo</property>
+                        <property name="label" translatable="yes">gtk-undo</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_edit_menu_undo_activate"/>
                         <accelerator key="Z" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image42">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-undo</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="edit_menu_redo">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">_Redo</property>
+                        <property name="label" translatable="yes">gtk-redo</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_edit_menu_redo_activate"/>
                         <accelerator key="Y" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image43">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-redo</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -212,61 +163,37 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="edit_menu_cut">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Cut</property>
+                        <property name="label" translatable="yes">gtk-cut</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_edit_menu_cut_activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image44">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-cut</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="edit_menu_copy">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">C_opy</property>
+                        <property name="label" translatable="yes">gtk-copy</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_edit_menu_copy_activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image45">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-copy</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="edit_menu_paste">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Paste</property>
+                        <property name="label" translatable="yes">gtk-paste</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_edit_menu_paste_activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image46">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-paste</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="edit_menu_delete">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">_Delete</property>
+                        <property name="label" translatable="yes">gtk-delete</property>
                         <property name="use_underline">True</property>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image47">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-delete</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
+                        <property name="use_stock">True</property>
                       </widget>
                     </child>
                   </widget>
@@ -286,17 +213,11 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="search_menu_find">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Find</property>
+                        <property name="label" translatable="yes">gtk-find</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_search_menu_find_activate"/>
                         <accelerator key="F" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image20">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-find</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -316,16 +237,10 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="search_menu_replace">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Search and replace</property>
+                        <property name="label" translatable="yes">gtk-find-and-replace</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image22">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-find-and-replace</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -381,16 +296,10 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="tools_menu_preferences">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Preferences</property>
+                        <property name="label" translatable="yes">gtk-preferences</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_tools_menu_preferences_activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image17">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-preferences</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
                       </widget>
                     </child>
                     <child>
@@ -466,29 +375,17 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="help_menu_about">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">About</property>
+                        <property name="label" translatable="yes">gtk-about</property>
                         <property name="use_underline">True</property>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image49">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-about</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
+                        <property name="use_stock">True</property>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="help_menu_show">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Show help</property>
+                        <property name="label" translatable="yes">gtk-help</property>
                         <property name="use_underline">True</property>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="menu-item-image18">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-help</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
+                        <property name="use_stock">True</property>
                       </widget>
                     </child>
                   </widget>

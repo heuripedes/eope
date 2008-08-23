@@ -26,7 +26,7 @@ class PreferencesSignals
     
     public function on_btn_ok_clicked ()
     {
-        $cm = ConfigManager::get_instance();
+        $cm = Etk::get_config();
         $w = $this->window;
         
         $cm->set('files.reopen', $w->widget('pref_reopen')->get_active());

@@ -7,7 +7,7 @@ abstract class EtkWindow
     protected $accel_group;
     protected $window;
 
-    public function __construct ($gladefile = '', $widgetname = '')
+    public function __construct ($gladefile = '', $widgetname = '', $root = FALSE)
     {
         if ($gladefile != '' && !file_exists($gladefile))
         {
@@ -16,7 +16,7 @@ abstract class EtkWindow
         
         if ($gladefile != '')
         {
-            $this->glade = new GladeXML($gladefile);
+            $this->glade = ($root ? new GladeXML($gladefile, $root) : new GladeXML($gladefile));
             $this->window = $this->glade->get_widget($widgetname);
             
             if (!$this->window instanceof GtkWindow)

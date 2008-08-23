@@ -47,11 +47,11 @@ abstract class PluginAbstract
         
         if ($panel == 'side')
         {
-            $app->sidepanel_manager->add_panel($widget, $title);
+            $app->sidepanel->add_panel($widget, $title);
         }
         else // bottom panel
         {
-            $app->bottompanel_manager->add_panel($widget, $title);
+            $app->bottompanel->add_panel($widget, $title);
         }
     }
     
@@ -61,11 +61,11 @@ abstract class PluginAbstract
         
         if ($panel == 'side')
         {
-            $app->sidepanel_manager->remove_panel($widget);
+            $app->sidepanel->remove_panel($widget);
         }
         else // bottom panel
         {
-            $app->bottompanel_manager->remove_panel($widget);
+            $app->bottompanel->remove_panel($widget);
         }
     }
     

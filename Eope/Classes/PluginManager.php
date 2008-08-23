@@ -34,7 +34,7 @@ class PluginManager
     
     public function load_plugins ()
     {
-        $config = ConfigManager::get_instance();
+        $config = Etk::get_config();
         $plugins = explode(':', $config->get('eope.plugins'));
         
         foreach($plugins as $plugin)
@@ -111,7 +111,7 @@ class PluginManager
     
     
     
-    public function run_event ()
+    public function notify ()
     {
         $args = func_get_args();
         $event = $args[0];

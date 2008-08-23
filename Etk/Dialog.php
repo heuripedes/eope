@@ -3,31 +3,63 @@
 /**
  * Dialog.php
  * 
- * Class to easy create basic dialogs.
+ * This file is part of Etk
  * 
  * @author     Higor "enygmata" Eurípedes
  * @copyright  Higor "enygmata" Eurípedes (c) 2008
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL 
  */
 
+/**
+ * EtkDialog
+ * 
+ * This class manages the dialog windows creation.
+ * 
+ * @author Higor "enygmata" Eurípedes
+ */
 class EtkDialog 
 {
-    const INFO = Gtk::MESSAGE_INFO;
-    const WARN = Gtk::MESSAGE_WARNING;
-    const ERROR = Gtk::MESSAGE_ERROR;
-    const QUESTION = Gtk::MESSAGE_QUESTION;
-    const CONFIRM = Gtk::MESSAGE_QUESTION;
+    const YESNO       = 'yesno';
+    const YESNOCANCEL = 'yesnocancel';
+    const INFO        = 'info';
+    const WARN        = 'warning';
+    const ERROR       = 'error';
+    const QUESTION    = 'question';
     
-    private static $file_dialog_opts = array(
+    protected static $file_dialog_opts = array(
         Gtk::STOCK_CANCEL,
         Gtk::RESPONSE_CANCEL,
         Gtk::STOCK_SAVE,
         Gtk::RESPONSE_ACCEPT
     );
 
-    private static $valid_types = array(
-        self::INFO, self::WARN, self::ERROR, self::QUESTION, self::CONFIRM
+    protected static $gtk_dialog_types = array(
+        'yesno'       => GTK::MESSAGE_QUESTION,
+        'yesnocancel' => GTK::MESSAGE_QUESTION,
+        'error'          => GTK::MESSAGE_ERROR,
+        'warning'     => GTK::MESSAGE_WARNING,
+        'info'        => GTK::MESSAGE_INFO
     );
+    
+    protected static $gtk_dialog_buttons = array(
+        'yesno'       => Gtk::BUTTONS_YES_NO,
+        'yesnocancel' => Gtk::BUTTONS_YES_NO,
+        'error'       => Gtk::BUTTONS_CLOSE,
+        'warning'     => Gtk::BUTTONS_CLOSE,
+        'info'        => Gtk::BUTTONS_CLOSE
+    );
+    
+    /**
+     * Returns the GtkWindow from the specified variable.
+     * 
+     * The function will try to autodetect and return a GtkWindow
+     * from the given parameter.
+     * 
+     * The function will throw an EtkException if the GtkWindow cannot be found.
+     * 
+     * @param mixed $window a GtkWindow, EtkWindow or NULL to get the main application window.
+     * @return GtkWindow a GtkWindow.
+     */
 
     protected static function get_window ($window = null)
     {
@@ -46,6 +78,16 @@ class EtkDialog
         }
         return $window;
     }
+    
+    /**
+     * Displays a 'Save as' dialog.
+     * 
+     * The function displays a 'Save file as' dialog and returns the user response.
+     * 
+     * @param mixed $window the parent window.
+     * @return int the user response
+     * @see EtkDialog::get_window()
+     */
     
     public static function save_as ($window = null)
     {
@@ -67,6 +109,17 @@ class EtkDialog
         return $filename;
     }
     
+    /**
+     * Displays a 'Open file' dialog
+     * 
+     * This function will attempt to display a 'Open file' dialog and return
+     * the user response.
+     * 
+     * @param mixed $window the parent window.
+     * @return int the user response
+     * @see EtkDialog::get_window(), EtkDialog::open_dir()
+     */
+    
     public static function open_file ($window = null)
     {
         $window = self::get_window($window);
@@ -85,6 +138,17 @@ class EtkDialog
         
         return $filename;
     }
+    
+    /**
+     * Displays a 'Open directory' window.
+     * 
+     * This function attempts to display a 'Open directory' dialog (Windows users know this
+     * as 'Select directory') and return the user response
+     * 
+     * @param mixed $window the parent window.
+     * @return int the user response
+     * @see EtkDialog::get_window(), EtkDialog::open_file()
+     */
     
     public static function open_dir ($window = null)
     {
@@ -106,28 +170,41 @@ class EtkDialog
         return $dirpath;
     }
     
-    public static function message ($message, $title = null, $type = EtkDialog::INFO, $window = null, $flags = 0)
+    /**
+     * Displays a message to the user.
+     * 
+     * This function attempts to display a information/warning/error/confirmation/question
+     * message to the user and returns his response.
+     * @param string $message the message to be displayed.
+     * @param string $title the dialog title.
+     * @param string $type the type of the dialog.
+     * @param mixed $window the parent window.
+     * @param int $flags GTK_DIALOG_FLAGS to be given during the dialog creation.
+     * @return int the user response
+     * @see EtkDialog::get_window(), EtkDialog::open_file()
+     */
+    
+    public static function message ($message, $title, $type = EtkDialog::INFO, $window = null, $flags = 0)
     {
         $window = self::get_window($window);
         
-        if (!in_array($type, self::$valid_types))
+        if (!isset(self::$gtk_dialog_types[$type]))
         {
-            $type = self::INFO;
+            throw new EtkException("'%s' is not a valid dialog type", $type);
         }
         
-        // TODO: add self::CONFIRM dialog :)
-        if($type == self::QUESTION)
+        $gtktype = self::$gtk_dialog_types[$type];
+        $buttons = self::$gtk_dialog_buttons[$type];
+               
+        $win = new GtkMessageDialog($window, $flags, $gtktype, $buttons, $message);
+        
+        if ($type == self::YESNOCANCEL)
         {
-            $win = new GtkMessageDialog($window, $flags, $type, Gtk::BUTTONS_YES_NO, '');
-        }
-        else
-        {
-            $win = new GtkMessageDialog($window, $flags, $type, Gtk::BUTTONS_CLOSE, '');
+            $win->add_buttons(array(Gtk::STOCK_CANCEL, Gtk::RESPONSE_CANCEL));
         }
         
         $win->set_position(Gtk::WIN_POS_CENTER);
         $win->set_title($title);
-        $win->set_markup($message);
         
         $response = $win->run();
         $win->destroy();
@@ -136,3 +213,4 @@ class EtkDialog
     }
 }
 
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */

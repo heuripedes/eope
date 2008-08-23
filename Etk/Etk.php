@@ -3,7 +3,7 @@
 /**
  * Etk.php
  * 
- * The main Eope Tool Kit class.
+ * This file is part of Etk
  * 
  * @author     Higor "enygmata" Eurípedes
  * @copyright  Higor "enygmata" Eurípedes (c) 2008
@@ -24,6 +24,19 @@ if (version_compare(PHP_VERSION, '5.2.5', '<'))
 {
     die("[EtkException] Incompatible PHP version. " .
         "Upgrade to 5.2.5 or higher and try again.\n");
+}
+
+define('HAS_MBSTRING', function_exists('mb_list_encodings'));
+define('HAS_GETTEXT',  function_exists('gettext'));
+
+if (!HAS_GETTEXT)
+{
+    function bindtextdomain ($domain, $dir) { }    
+    function textdomain ($domain) {    }
+    function gettext ($msgid) {    return $msgid; }
+    function ngettext ($msgid1, $msgid2, $count) { return ($count>1?_($msgid1):_($msgid2)); }
+    function _ ($msgid) { return $msgid; }
+    function _N ($msgid1, $msgid2, $count) { return ($count>1?_($msgid1):_($msgid2)); }
 }
 
 $env = $_ENV + $_SERVER;
@@ -88,6 +101,11 @@ class Etk
         return self::$app;
     }
     
+    public static function get_config ()
+    {
+        return self::$app->get_conf();
+    }
+    
     // use it if you wish you application class to be "global"
     public static function set_app (EtkApplication $application)
     {
@@ -118,7 +136,10 @@ class EtkException extends Exception
     {
         $args = func_get_args();
         $message = call_user_func_array('sprintf', $args);
-        parent::__construct("[EtkException] $message\n");
+        $message = sprintf(_('Etk Exception: %s'), $message);
+        parent::__construct($message."\n");
         return;
     }
 }
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */

@@ -16,15 +16,29 @@ class EopeSignals
     {
     }
     
-    public function on_main_window_hide ()
+    public function on_quit_app ()
     {
-        Etk::get_app()->on_client_quit();
-        Etk::get_app()->terminate();
+        PluginManager::get_instance()->notify('main_window_destroy');
+        $app = Etk::get_app();
+        $modified = $app->document_manager->get_modified_files();
+
+        if (count($modified) > 0)
+        {
+            $response = EtkDialog::message('Do you wish to save the modified files before leave Eope?',
+                        null, EtkDialog::YESNOCANCEL);
+            
+            switch($response)
+            {
+                case Gtk::RESPONSE_CANCEL: return true; // true to continue :)
+                case Gtk::RESPONSE_YES: $app->document_manager->save_all(); break;
+            }
+        }
+        $app->terminate();
     }
     
     public function on_main_window_delete_event ()
     {
-        Etk::get_app()->hide();
+        return $this->on_quit_app();
     }
     
     public function on_lang_combo_changed ()
@@ -71,7 +85,7 @@ class EopeSignals
             return;
         }
         
-        $conf = ConfigManager::get_instance();
+        $conf = Etk::get_config();
         $n = $app->widget('tab_combo')->get_active();
         
         if ($n > 3)
@@ -110,6 +124,10 @@ class EopeSignals
     }
 
 // file menu {
+    public function on_file_menu_quit_activate ()
+    {
+        $this->on_quit_app();
+    }
     public function on_file_menu_close_activate ()
     {
         Etk::get_app()->document_manager->close_document();
@@ -180,6 +198,6 @@ class EopeSignals
 
     public function on_search_menu_find_activate ()
     {
-        $app = Etk::get_app();
+        new SearchDialog();
     }
 }
