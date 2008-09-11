@@ -85,3 +85,6 @@ function get_mime_by_ext ($ext, $mimeno = 0)
         return $mimes[$ext][0];
     }
 }
+
+
+

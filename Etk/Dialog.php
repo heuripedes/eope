@@ -19,12 +19,12 @@
  */
 class EtkDialog 
 {
-    const YESNO       = 'yesno';
-    const YESNOCANCEL = 'yesnocancel';
-    const INFO        = 'info';
-    const WARN        = 'warning';
-    const ERROR       = 'error';
-    const QUESTION    = 'question';
+    const YESNO       = 0x01;
+    const YESNOCANCEL = 0x02;
+    const INFO        = 0x04;
+    const WARN        = 0x08;
+    const ERROR       = 0x10;
+    const QUESTION    = 0x20;
     
     protected static $file_dialog_opts = array(
         Gtk::STOCK_CANCEL,
@@ -32,23 +32,22 @@ class EtkDialog
         Gtk::STOCK_SAVE,
         Gtk::RESPONSE_ACCEPT
     );
-
     protected static $gtk_dialog_types = array(
-        'yesno'       => GTK::MESSAGE_QUESTION,
-        'yesnocancel' => GTK::MESSAGE_QUESTION,
-        'error'          => GTK::MESSAGE_ERROR,
-        'warning'     => GTK::MESSAGE_WARNING,
-        'info'        => GTK::MESSAGE_INFO
+        0x01 => GTK::MESSAGE_QUESTION,
+        0x02 => GTK::MESSAGE_QUESTION,
+        0x04 => GTK::MESSAGE_INFO,
+        0x08 => GTK::MESSAGE_WARNING,
+        0x10 => GTK::MESSAGE_ERROR
     );
     
     protected static $gtk_dialog_buttons = array(
-        'yesno'       => Gtk::BUTTONS_YES_NO,
-        'yesnocancel' => Gtk::BUTTONS_YES_NO,
-        'error'       => Gtk::BUTTONS_CLOSE,
-        'warning'     => Gtk::BUTTONS_CLOSE,
-        'info'        => Gtk::BUTTONS_CLOSE
+        0x01 => Gtk::BUTTONS_YES_NO,
+        0x02 => Gtk::BUTTONS_YES_NO,
+        0x04 => Gtk::BUTTONS_CLOSE,
+        0x08 => Gtk::BUTTONS_CLOSE,
+        0x10 => Gtk::BUTTONS_CLOSE
     );
-    
+        
     /**
      * Returns the GtkWindow from the specified variable.
      * 
@@ -93,7 +92,7 @@ class EtkDialog
     {
         $window = self::get_window($window);
         
-        $dialog = new GtkFileChooserDialog('Save as', $window, Gtk::FILE_CHOOSER_ACTION_SAVE,
+        $dialog = new GtkFileChooserDialog(_('Save as'), $window, Gtk::FILE_CHOOSER_ACTION_SAVE,
                 array(Gtk::STOCK_CANCEL, Gtk::RESPONSE_CANCEL, Gtk::STOCK_SAVE, Gtk::RESPONSE_ACCEPT), null);
         $dialog->show_all();
 
@@ -123,7 +122,7 @@ class EtkDialog
     public static function open_file ($window = null)
     {
         $window = self::get_window($window);
-        $dialog = new GtkFileChooserDialog('Open file', $window, Gtk::FILE_CHOOSER_ACTION_OPEN,
+        $dialog = new GtkFileChooserDialog(_('Open file'), $window, Gtk::FILE_CHOOSER_ACTION_OPEN,
             array(Gtk::STOCK_CANCEL, Gtk::RESPONSE_CANCEL, Gtk::STOCK_OPEN, Gtk::RESPONSE_ACCEPT), null);
         $dialog->show_all();
 
@@ -154,7 +153,7 @@ class EtkDialog
     {
         $window = self::get_window($window);
         
-        $dialog = new GtkFileChooserDialog('Open directory', $window,
+        $dialog = new GtkFileChooserDialog(_('Open directory'), $window,
             Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER,
             array(Gtk::STOCK_CANCEL, Gtk::RESPONSE_CANCEL, Gtk::STOCK_OPEN, Gtk::RESPONSE_ACCEPT), null);
         $dialog->show_all();
@@ -175,7 +174,7 @@ class EtkDialog
      * 
      * This function attempts to display a information/warning/error/confirmation/question
      * message to the user and returns his response.
-     * @param string $message the message to be displayed.
+     * @param int $message the message to be displayed.
      * @param string $title the dialog title.
      * @param string $type the type of the dialog.
      * @param mixed $window the parent window.
@@ -213,4 +212,3 @@ class EtkDialog
     }
 }
 
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */

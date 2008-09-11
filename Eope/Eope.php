@@ -19,14 +19,39 @@ require_once(APP_DIR . 'functions.php');
 
 require_once(APP_DIR . 'Classes/PluginManager.php');
 
+// do some auto-select the document class
+if (HAS_SCINTILLA)
+{
+	require_once(APP_DIR . 'Classes/ScintillaDocument.php');
+}
+elseif (HAS_SOURCEVIEW2)
+{
+	require_once(APP_DIR . 'Classes/Sourceview2Document.php');
+}
+elseif (HAS_SOURCEVIEW)
+{
+	require_once(APP_DIR . 'Classes/Sourceview2Document.php');
+}
+else
+{
+	require_once(APP_DIR . 'Classes/BasicDocument.php');
+}
+
+require_once(APP_DIR . 'Classes/Editor.php');
+
 require_once(APP_DIR . 'Widgets/PanelManager.php');
-require_once(APP_DIR . 'Widgets/DocumentManager.php');
 
 require_once(APP_DIR . 'EopeSignals.php');
 
 require_once(APP_DIR . 'PluginPrefs.php');
 require_once(APP_DIR . 'SearchDialog.php');
 require_once(APP_DIR . 'Preferences.php');
+
+// TODO: Wrap strings with _() for internationalization thru gettext
+// TODO: improve plugin API
+// TODO: Implement search
+// TODO: implementing replace
+// TODO: finish Etk documentation
 
 
 class Eope extends EtkApplication
@@ -38,18 +63,18 @@ class Eope extends EtkApplication
     public $bottompanel = null;
     public $argv = array();
     
+    private $editor;
     private $firstrun; 
     
     public $valid_encodings = array(
-        'UCS-4','UCS-4BE','UCS-4LE','UCS-2','UCS-2BE',
-        'UCS-2LE','UTF-32','UTF-32BE','UTF-32LE','UTF-16','UTF-16BE',
+        'UTF-32','UTF-32BE','UTF-32LE','UTF-16','UTF-16BE',
         'UTF-16LE','UTF-8','UTF-7','UTF7-IMAP','ASCII','EUC-JP','SJIS',
         'EUCJP-WIN','SJIS-WIN','CP51932','JIS','ISO-2022-JP','ISO-2022-JP-MS',
         'WINDOWS-1252','ISO-8859-1','ISO-8859-2','ISO-8859-3','ISO-8859-4',
         'ISO-8859-5','ISO-8859-6','ISO-8859-7','ISO-8859-8','ISO-8859-9',
         'ISO-8859-10','ISO-8859-13','ISO-8859-14','ISO-8859-15','ISO-8859-16',
-        'EUC-CN','CP936','HZ','EUC-TW','BIG-5','EUC-KR','UHC','ISO-2022-KR',
-        'WINDOWS-1251','CP866','KOI8-R','ARMSCII-8'
+        'EUC-CN','CP936','EUC-TW','EUC-KR','ISO-2022-KR','WINDOWS-1251','CP866',
+		'KOI8-R','ARMSCII-8'
     );
     
     private static $default_conf = array(
@@ -108,20 +133,18 @@ class Eope extends EtkApplication
         
         $config = $this->config;
         
-        $plugin_manager = PluginManager::get_instance();
+        //$plugin_manager = PluginManager::get_instance();
         
-        $this->document_manager = new DocumentManager();
-        $this->widget('editor_vbox')->pack_start($this->document_manager);
-        $this->widget('editor_vbox')->show_all();
+        $this->editor = new Editor($this->widget('editor_nbk'));
         
-        $this->sidepanel = new PanelManager();
+        /*$this->sidepanel = new PanelManager();
         $this->widget('side_panel')->pack_start($this->sidepanel);
         $this->widget('side_panel')->show_all();
         
         $this->bottompanel = new PanelManager();
         $this->widget('bottom_panel')->pack_start($this->bottompanel);
         $this->widget('bottom_panel')->show_all();
-
+*/
         $this->widget('tab_combo')->set_active($config->get('editor.tab_style'));
         
         $this->resize((int)$config->get('ui.width'), (int)$config->get('ui.height'));
@@ -134,8 +157,19 @@ class Eope extends EtkApplication
         $this->activate_widgets();
     }
     
+    public function get_editor ()
+    {
+        return $this->editor;
+    }
+    
     public function run ()
     {
+        $this->connect_glade_to(new EopeSignals());
+        
+        $this->refresh();
+        
+        parent::run();;
+        return;
         $config = $this->config;
         
         $argv = array_slice($this->argv, 1);
@@ -175,7 +209,7 @@ class Eope extends EtkApplication
     
     public function activate_widgets ($active = false)
     {
-        PluginManager::get_instance()->notify('activate_widgets', $active);
+        //PluginManager::get_instance()->notify('activate_widgets', $active);
         $this->widget('fake_status_bar')->set_visible($active);
         $this->widget('file_menu_save')->set_sensitive($active);
         $this->widget('file_menu_save_all')->set_sensitive($active);

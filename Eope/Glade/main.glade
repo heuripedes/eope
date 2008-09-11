@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sat Aug 23 00:27:20 2008 -->
+<!--Generated with glade3 3.4.5 on Sat Aug 30 21:44:08 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
-    <property name="width_request">800</property>
+    <property name="width_request">600</property>
     <property name="height_request">480</property>
     <property name="title" translatable="yes">Eope</property>
     <property name="window_position">GTK_WIN_POS_CENTER</property>
@@ -31,8 +31,8 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_file_menu_new_activate"/>
-                        <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                         <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+                        <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -399,6 +399,7 @@
         </child>
         <child>
           <widget class="GtkHPaned" id="paned1">
+            <property name="width_request">180</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
@@ -423,7 +424,10 @@
                       <widget class="GtkVBox" id="editor_vbox">
                         <property name="visible">True</property>
                         <child>
-                          <placeholder/>
+                          <widget class="GtkNotebook" id="editor_nbk">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </widget>
                         </child>
                       </widget>
                       <packing>

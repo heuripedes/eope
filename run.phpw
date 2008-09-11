@@ -6,12 +6,13 @@
  *
  * This file starts your application.
  * 
- * @author     Higor "enygmata" Eurí­pedes
- * @copyright  Higor "enygmata" Eurí­pedes (c) 2008
+ * @author     Higor "enygmata" EurÃ­Â­pedes
+ * @copyright  Higor "enygmata" EurÃ­Â­pedes (c) 2008
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL 
  */
 
 error_reporting(E_ALL | E_STRICT);
+ini_set('php-gtk.codepage','UTF-8');
 
 define('ETK_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Etk'  . DIRECTORY_SEPARATOR);
 define('APP_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Eope'  . DIRECTORY_SEPARATOR);
@@ -19,11 +20,13 @@ define('APP_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Eope'  . DIRECTORY_
 
 require_once(ETK_DIR . 'Etk.php');
 
-/*putenv("LANG=pt_BR"); 
+etk_require_version('0.0.6');
+
+// TODO: create eope's gettext files for internationalization
+putenv('LANG=pt_BR'); 
 setlocale(LC_ALL, 'pt_BR');
 bindtextdomain('geany', '/usr/local/share/locale');
 textdomain('geany');
-*/
 
 try {
     Etk::run('Eope', $_SERVER['argv']);

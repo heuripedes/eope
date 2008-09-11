@@ -20,7 +20,7 @@ class EopeSignals
     {
         PluginManager::get_instance()->notify('main_window_destroy');
         $app = Etk::get_app();
-        $modified = $app->document_manager->get_modified_files();
+        $modified = $app->editor->get_modified_files();
 
         if (count($modified) > 0)
         {
@@ -30,7 +30,8 @@ class EopeSignals
             switch($response)
             {
                 case Gtk::RESPONSE_CANCEL: return true; // true to continue :)
-                case Gtk::RESPONSE_YES: $app->document_manager->save_all(); break;
+                // TODO: fix save_all();
+                case Gtk::RESPONSE_YES: $app->editor->save_all(); break;
             }
         }
         $app->terminate();
@@ -60,17 +61,17 @@ class EopeSignals
     public function on_encoding_combo_changed ()
     {
         $app = Etk::get_app();
-        $document = $app->document_manager->get_document();
+        $doc = $app->get_editor()->get_document();
         
-        if ($document === false)
+        if ($doc === false)
         {
             return;
         }
         
-        if (HAS_MBSTRING && $document->get_encoding() != $app->widget('encoding_combo')->get_active_text())
+        if (HAS_MBSTRING && $doc['obj']->get_encoding() != $app->widget('encoding_combo')->get_active_text())
         {
-            $document->set_encoding($app->widget('encoding_combo')->get_active_text());
-            $app->document_manager->check_document_status();
+            $doc['obj']->set_encoding($app->widget('encoding_combo')->get_active_text());
+            $app->get_editor()->on_doc_ui_update($doc['obj']);
         }
     }
     
@@ -115,12 +116,14 @@ class EopeSignals
 // view menu {
     public function on_view_menu_side_panel_activate ()
     {
-        Etk::get_app()->widget('side_panel')->set_visible(!Etk::get_app()->widget('side_panel')->is_visible());
+        Etk::get_app()->bottompanel->toggle();
+        Etk::get_app()->widget('side_panel')->set_visible(Etk::get_app()->bottompanel->is_visible());
+        PluginManager::get_instance()->notify('side_panel_toggle', Etk::get_app()->bottompanel);
     }
     
     public function on_view_menu_bottom_panel_activate ()
     {
-        Etk::get_app()->widget('bottom_panel')->set_visible(!Etk::get_app()->widget('bottom_panel')->is_visible());
+        Etk::get_app()->widget('bottom_panel')->toggle();
     }
 
 // file menu {
@@ -135,17 +138,24 @@ class EopeSignals
 
     public function on_file_menu_open_activate ()
     {
-        Etk::get_app()->document_manager->open_document(true);
+        $filename = EtkDialog::open_file();
+        
+        if ($filename === false)
+        {
+            return;
+        }
+        
+        Etk::get_app()->get_editor()->open_file($filename);
     }
 
     public function on_file_menu_new_activate ()
     {
-        Etk::get_app()->document_manager->open_document();
+        Etk::get_app()->get_editor()->open_file();
     }
 
     public function on_file_menu_save_activate ()
     {
-        Etk::get_app()->document_manager->save_document();
+        Etk::get_app()->get_editor()->save_document();
     }
     
     public function on_file_menu_save_as_activate ()

@@ -1,12 +1,9 @@
-TODO:
-
-wrap strings with _() for internationalization thru gettext
-implement search
-implementing replace
-finish Etk documentation
-
-- CODE
-finish menu signals
-
-- FEATURES
-add bracket/quote completing
+Eope/EopeSignals.php:33:// TODO:fix save_all();
+Eope/Classes/ScintillaDocument.php:29:// TODO:remove this testing stuff.. and add configuration reading
+Eope/Classes/Editor.php:240:// TODO:check this
+Eope/Classes/Editor.php:268:// TODO:detect & set language
+Eope/Eope.php:35:// TODO:Wrap strings with _() for internationalization thru gettext
+Eope/Eope.php:36:// TODO:improve plugin API
+Eope/Eope.php:37:// TODO:Implement search
+Eope/Eope.php:38:// TODO:implementing replace
+Eope/Eope.php:39:// TODO:finish Etk documentation

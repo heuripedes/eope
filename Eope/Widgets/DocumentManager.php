@@ -12,22 +12,23 @@
 
 require_once(APP_DIR . 'Widgets/Document.php');
 
-class DocumentManager extends GtkNotebook
+class DocumentManager
 {
     protected $documents = array();
     protected $untitled_count = 0;
     protected $close_icon = null;
+    protected $notebook;
 
-    public function __construct ()
+    public function __construct ($notebook)
     {
-        parent::__construct();
+        $this->notebook = $notebook;
+                    
+        //$this->connect_after('switch-page', array($this, 'on_change_tab'));
 
-        $this->connect_after('switch-page', array($this, 'on_change_tab'));
-
-        $git = GtkIconTheme::get_default();
-        $this->close_icon = GtkImage::new_from_pixbuf($git->load_icon('gtk-close', 16, Gtk::ICON_LOOKUP_USE_BUILTIN));
+        //$git = GtkIconTheme::get_default();
+        //$this->close_icon = GtkImage::new_from_pixbuf($git->load_icon('gtk-close', 16, Gtk::ICON_LOOKUP_USE_BUILTIN));
         
-        $this->set_scrollable(true);
+        //$this->set_scrollable(true);
     }
 
     public function on_change_tab ()
@@ -229,12 +230,22 @@ class DocumentManager extends GtkNotebook
      * 
      * @param string|boolean|null $filename
      */
+    public function ___changed () {
+        echo "insert!! :D\n";
+    }
+    public function ___changed2 () {
+        echo "delete!! :D\n";
+    }
     public function open_document ($filename = null)
     {
         $app = Etk::get_app();
         
-        $document = new Document();
-        
+        //$document = new Document();
+        // do some auto detection stuff here
+        $document = new ScintillaDocument();
+        //$document->load_file('/home/enygmata/work/eope/src/run.phpw');
+        //$this->append_page($document->get_widget(), new GtkLabel(basename($document->get_filename())));
+        //return;
         if ($filename === true)
         {
             $filename = EtkDialog::open_file();
@@ -255,17 +266,21 @@ class DocumentManager extends GtkNotebook
             
             $document->set_filename($filename);
             
-            if ($document->load() === false)
+            if ($document->load_file() !== true)
             {
                 return;
             }
         }
+        
+        $this->append_page($document->get_widget(), new GtkLabel(basename($document->get_filename())));
+        
+        return;
 
         $title = basename($filename);
         
         if ($filename === null)
         {
-            $title = 'Untitled ' . (++$this->untitled_count);
+            $title = sprintf(_('Untitled %i'), ++$this->untitled_count);
             $document->set_modified(true);
         }
         

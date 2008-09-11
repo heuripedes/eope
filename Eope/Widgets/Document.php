@@ -12,32 +12,31 @@
 
 class Document extends GtkSourceView
 {
-    protected $tab = -1;
-    protected $filename = '';
-    protected $title = '';
-    protected $lang_name = '';
-    protected $options = array();
-    protected $encoding = '';
+    private $filename;
+    private $mtime;
+    private $readonly;
+    private $syntax;
+    private $view;
     
-    
+    protected $lang_name;
+    protected $encoding;
 
     public function __construct ()
     {
         parent::__construct();
-        $buffer = new GtkSourceBuffer();
-        $this->set_buffer($buffer);
-        $this->buffer = $this->get_buffer();
+        
+        $this->buffer = new GtkSourceBuffer();
+        $this->view   = GtkSourceView::new_with_buffer($this->buffer);
+        
+        $this->set_buffer($this->buffer);
         $this->encoding = strtoupper(ini_get('php-gtk.codepage'));
     }
-
-    public function set_parent_tab ($tab)
+    
+    public function configure ($readonly = null, $encoding)
     {
-        $this->tab = $tab;
-    }
-
-    public function get_parent_tab ()
-    {
-        return $this->tab;
+        $this->readonly = $readonly === null ? $this->readonly : (bool)   $readonly;
+        $this->encoding = $encoding === null ? $this->encoding : (string) $encoding;
+        //$this->
     }
 
     public function get_modified ()

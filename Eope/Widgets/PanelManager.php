@@ -14,18 +14,9 @@ class PanelManager extends GtkNotebook
         $this->set_show_tabs($this->get_n_pages() > 1);
     }
     
-    public function set_visible ($visible, $all = true)
+    public function toggle ()
     {
-        echo "visible = $visible\n";
-        $this->update();
-        if ($this->get_n_pages() < 1)
-        {
-            $this->set_visible(false);
-        }
-        else
-        {
-            parent::set_visible($visible, $all);
-        }
+        $this->set_visible(!$this->is_visible());
     }
     
     public function add_panel (GtkWidget $child, $label = '')

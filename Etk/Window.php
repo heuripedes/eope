@@ -6,9 +6,11 @@ abstract class EtkWindow
     protected $glade;
     protected $accel_group;
     protected $window;
+	protected $widgets;
 
     public function __construct ($gladefile = '', $widgetname = '', $root = FALSE)
     {
+		
         if ($gladefile != '' && !file_exists($gladefile))
         {
             throw new EtkException('Glade file not found.');
@@ -27,6 +29,7 @@ abstract class EtkWindow
         
         $this->accel_group = new GtkAccelGroup();
         $this->window->add_accel_group($this->accel_group);
+		$this->widgets = array();
     }
     
     public function __destruct ()
@@ -55,19 +58,27 @@ abstract class EtkWindow
     {
         $this->glade->signal_autoconnect_instance($this);
     }
+	
+	public function add_widget ($name, $widget)
+	{
+		$this->widgets[$name] = $widget;
+	}
 
-    public function widget ($widgetname)
+    public function widget ($name)
     {
+		if (array_key_exists($name, $this->widgets))
+		{
+			return $this->widgets[$name];
+		}
+		
         if (!$this->glade instanceof GladeXML)
         {
-            throw new EtkException('Cannot find the widget: this window is not glade-based.');
+            throw new EtkException(_("Cannot find the widget '%s'."), $name);
         }
 
-        $widget = $this->glade->get_widget($widgetname);
+        $widget = $this->glade->get_widget($name);
 
         return $widget;
-        //echo $widgetname . "\n";
-        //throw new Exception('Cannot find the widget.');
     }
     
     public function get_accel_group ()

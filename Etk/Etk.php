@@ -15,19 +15,32 @@
  * stuff.
  */
 
-if (!class_exists('gtk') && !in_array('php-gtk', get_loaded_extensions()))
-{
-    throw new EtkException('Gtk extension is not loaded');
-}
-
 if (version_compare(PHP_VERSION, '5.2.5', '<'))
 {
     die("[EtkException] Incompatible PHP version. " .
         "Upgrade to 5.2.5 or higher and try again.\n");
 }
 
-define('HAS_MBSTRING', function_exists('mb_list_encodings'));
-define('HAS_GETTEXT',  function_exists('gettext'));
+if (!class_exists('gtk') && !in_array('php-gtk', get_loaded_extensions()))
+{
+    throw new EtkException('Gtk extension is not loaded');
+}
+
+define('HAS_MBSTRING',    function_exists('mb_list_encodings'));
+define('HAS_SCINTILLA',   class_exists('GtkScintilla'));
+define('HAS_SOURCEVIEW',  class_exists('GtkSourceTagStyle'));
+define('HAS_SOURCEVIEW2', class_exists('GtkSourceLanguageManager'));
+define('HAS_GETTEXT',     function_exists('gettext'));
+
+define('ETK_VERSION', '0.0.6');
+
+function etk_require_version ($version)
+{
+	if (!version_compare(ETK_VERSION, $version, '>='))
+	{
+		throw new EtkException(_('This application requires Etk version %s or higher.'), $version);
+	}
+}
 
 if (!HAS_GETTEXT)
 {
